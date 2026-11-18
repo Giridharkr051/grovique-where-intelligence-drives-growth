@@ -7,6 +7,10 @@ class MarketStream {
     const rawCatalysts = (typeof window !== 'undefined' && window.INITIAL_CATALYSTS) ? window.INITIAL_CATALYSTS : (typeof INITIAL_CATALYSTS !== 'undefined' ? INITIAL_CATALYSTS : []);
 
     this.stocks = JSON.parse(JSON.stringify(rawStocks));
+    this.stocks.forEach(stock => {
+      const prev = stock.previousClose || stock.dayOpen || stock.ltp || 1;
+      stock.changePct = Number((((stock.ltp - prev) / prev) * 100).toFixed(2));
+    });
     this.sectors = JSON.parse(JSON.stringify(rawSectors));
     this.catalysts = JSON.parse(JSON.stringify(rawCatalysts));
     this.currentPhaseKey = "PRIME_BREAKOUT";
@@ -234,6 +238,8 @@ class MarketStream {
 
         newLtp = Number(newLtp.toFixed(2));
         stock.ltp = newLtp;
+        const prev = stock.previousClose || stock.dayOpen || stock.ltp || 1;
+        stock.changePct = Number((((stock.ltp - prev) / prev) * 100).toFixed(2));
 
         // Day High / Low
         if (newLtp > stock.dayHigh) stock.dayHigh = newLtp;

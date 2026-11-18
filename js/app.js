@@ -3,7 +3,7 @@
 
 class GroviqueApp {
   constructor() {
-    this.currentScreen = 'live-scanner';
+    this.currentScreen = 'overview';
     this.isDrawerOpen = false;
     this.activeChart = null;
 
@@ -106,19 +106,23 @@ class GroviqueApp {
         e.preventDefault();
         this.toggleDrawer();
       } else if (e.code === 'Digit1') {
-        this.openScreen('live-scanner');
+        this.openScreen('overview');
       } else if (e.code === 'Digit2') {
-        this.openScreen('screener-heatmap');
+        this.openScreen('scanner');
       } else if (e.code === 'Digit3') {
         this.openScreen('deep-dive');
       } else if (e.code === 'Digit4') {
-        this.openScreen('watchlist-alerts');
+        this.openScreen('watchlists');
       } else if (e.code === 'Digit5') {
-        this.openScreen('journal-analytics');
+        this.openScreen('market-activity');
       } else if (e.code === 'Digit6') {
-        this.openScreen('news-desk');
+        this.openScreen('alerts');
       } else if (e.code === 'Digit7') {
-        this.openScreen('backtester-lab');
+        this.openScreen('paper-journal');
+      } else if (e.code === 'Digit8') {
+        this.openScreen('learning-centre');
+      } else if (e.code === 'Digit9') {
+        this.openScreen('investment-calculators');
       } else if (e.code === 'KeyM') {
         this.toggleMute();
       } else if (e.code === 'KeyC') {
@@ -129,6 +133,8 @@ class GroviqueApp {
         this.closeDrawer();
         this.closeModal();
         this.closeStockSearchResults();
+        this.closeScannerWhyMatched();
+        this.closeLearningArticle();
       }
     });
   }
@@ -189,29 +195,51 @@ class GroviqueApp {
     const stream = window.marketStream;
 
     switch (this.currentScreen) {
-      case 'live-scanner':
-        mainContainer.innerHTML = UIComponents.renderCommandCenter(stream);
+      case 'overview':
+        mainContainer.innerHTML = UIComponents.renderDashboardOverview ? UIComponents.renderDashboardOverview(stream) : UIComponents.renderCommandCenter(stream);
         break;
-      case 'screener-heatmap':
-        mainContainer.innerHTML = UIComponents.renderScreenerHeatmap(stream);
+      case 'scanner':
+        mainContainer.innerHTML = UIComponents.renderStockScanner ? UIComponents.renderStockScanner(stream) : UIComponents.renderCommandCenter(stream);
         break;
       case 'deep-dive':
         mainContainer.innerHTML = UIComponents.renderDeepDive(stream);
         break;
+      case 'watchlists':
+        mainContainer.innerHTML = UIComponents.renderWatchlists ? UIComponents.renderWatchlists(stream) : UIComponents.renderWatchlistAlerts(stream);
+        break;
+      case 'market-activity':
+        mainContainer.innerHTML = UIComponents.renderMarketActivity ? UIComponents.renderMarketActivity(stream) : UIComponents.renderScreenerHeatmap(stream);
+        break;
+      case 'alerts':
+        mainContainer.innerHTML = UIComponents.renderAlertsCentre ? UIComponents.renderAlertsCentre(stream) : UIComponents.renderWatchlistAlerts(stream);
+        break;
+      case 'paper-journal':
+        mainContainer.innerHTML = UIComponents.renderPaperJournal ? UIComponents.renderPaperJournal(stream) : UIComponents.renderJournalAnalytics(stream);
+        break;
+      case 'learning-centre':
+        mainContainer.innerHTML = UIComponents.renderLearningCentre ? UIComponents.renderLearningCentre() : '<div>Learning Centre</div>';
+        break;
+      case 'settings':
+      case 'user-settings':
+        mainContainer.innerHTML = UIComponents.renderSettings();
+        break;
+      case 'live-scanner':
+        mainContainer.innerHTML = UIComponents.renderDashboardOverview ? UIComponents.renderDashboardOverview(stream) : UIComponents.renderCommandCenter(stream);
+        break;
+      case 'screener-heatmap':
+        mainContainer.innerHTML = UIComponents.renderMarketActivity ? UIComponents.renderMarketActivity(stream) : UIComponents.renderScreenerHeatmap(stream);
+        break;
       case 'watchlist-alerts':
-        mainContainer.innerHTML = UIComponents.renderWatchlistAlerts(stream);
+        mainContainer.innerHTML = UIComponents.renderWatchlists ? UIComponents.renderWatchlists(stream) : UIComponents.renderWatchlistAlerts(stream);
         break;
       case 'news-desk':
         mainContainer.innerHTML = UIComponents.renderNewsDesk();
         break;
       case 'journal-analytics':
-        mainContainer.innerHTML = UIComponents.renderJournalAnalytics(stream);
+        mainContainer.innerHTML = UIComponents.renderPaperJournal ? UIComponents.renderPaperJournal(stream) : UIComponents.renderJournalAnalytics(stream);
         break;
       case 'backtester-lab':
         mainContainer.innerHTML = UIComponents.renderBacktesterLab(stream);
-        break;
-      case 'user-settings':
-        mainContainer.innerHTML = UIComponents.renderSettings();
         break;
       case 'rag-mcp':
         mainContainer.innerHTML = UIComponents.renderRagMcpStudio(stream);
@@ -223,11 +251,11 @@ class GroviqueApp {
         mainContainer.innerHTML = UIComponents.renderCalculatorsStudio(stream);
         break;
       case 'sandbox-positions':
-        mainContainer.innerHTML = UIComponents.renderJournalAnalytics(stream);
+        mainContainer.innerHTML = UIComponents.renderPaperJournal ? UIComponents.renderPaperJournal(stream) : UIComponents.renderJournalAnalytics(stream);
         this.openPositionsModal();
         break;
       default:
-        mainContainer.innerHTML = UIComponents.renderCommandCenter(stream);
+        mainContainer.innerHTML = UIComponents.renderDashboardOverview ? UIComponents.renderDashboardOverview(stream) : UIComponents.renderCommandCenter(stream);
     }
 
     this.updateGlobalHeader();
@@ -1616,6 +1644,239 @@ class GroviqueApp {
       }
     } catch (err) {
       term.innerText = `// Failed to read resource: ${err.message}`;
+    }
+  }
+
+  // ==========================================
+  // GROVIQUE CORE SCREEN & DRAWER ACTIONS
+  // ==========================================
+  openScannerWhyMatched(symbol) {
+    if (!window.groviqueState) window.groviqueState = {};
+    window.groviqueState.activeScannerSymbol = symbol;
+    window.groviqueState.isWhyMatchedOpen = true;
+    
+    // Find stock
+    const stock = window.marketStream.stocks.find(s => s.symbol === symbol) || window.marketStream.getSelectedStock();
+    const content = document.getElementById('whyMatchedDrawerContent');
+    if (content && window.UIComponents && window.UIComponents.renderScannerWhyMatchedContent) {
+      content.innerHTML = window.UIComponents.renderScannerWhyMatchedContent(stock);
+    }
+    const drawer = document.getElementById('whyMatchedDrawer');
+    if (drawer) {
+      drawer.classList.remove('translate-x-full');
+    }
+    if (window.arcadeAudio) window.arcadeAudio.playBlip();
+  }
+
+  closeScannerWhyMatched() {
+    if (window.groviqueState) window.groviqueState.isWhyMatchedOpen = false;
+    const drawer = document.getElementById('whyMatchedDrawer');
+    if (drawer) drawer.classList.add('translate-x-full');
+  }
+
+  openLearningArticle(articleId) {
+    if (!window.groviqueState) window.groviqueState = {};
+    window.groviqueState.activeLearningArticle = articleId;
+    if (window.arcadeAudio) window.arcadeAudio.playBlip();
+    this.renderActiveScreen();
+  }
+
+  closeLearningArticle() {
+    if (window.groviqueState) window.groviqueState.activeLearningArticle = null;
+    this.renderActiveScreen();
+  }
+
+  switchWatchlistTab(tabName) {
+    if (!window.groviqueState) window.groviqueState = {};
+    window.groviqueState.activeWatchlistTab = tabName;
+    if (window.arcadeAudio) window.arcadeAudio.playBlip();
+    this.renderActiveScreen();
+  }
+
+  createNewWatchlistPrompt() {
+    const name = prompt("Enter new watchlist name (e.g. 'Momentum Breakouts', 'PSU Giants'):");
+    if (name && name.trim()) {
+      const clean = name.trim();
+      if (!window.groviqueState) window.groviqueState = {};
+      if (!window.groviqueState.watchlists) window.groviqueState.watchlists = {};
+      if (!window.groviqueState.watchlists[clean]) {
+        window.groviqueState.watchlists[clean] = ['RELIANCE', 'TCS'];
+        window.groviqueState.activeWatchlistTab = clean;
+        if (window.showAppToast) {
+          window.showAppToast({
+            title: "Watchlist Created",
+            message: `Created '${clean}' with initial symbols.`,
+            type: "success"
+          });
+        }
+        this.renderActiveScreen();
+      }
+    }
+  }
+
+  addStockToWatchlist(symbol) {
+    if (!symbol) return;
+    if (!window.groviqueState) window.groviqueState = {};
+    if (!window.groviqueState.watchlists) window.groviqueState.watchlists = {};
+    const activeTab = window.groviqueState.activeWatchlistTab || 'Main Watchlist';
+    if (!window.groviqueState.watchlists[activeTab]) {
+      window.groviqueState.watchlists[activeTab] = [];
+    }
+    if (!window.groviqueState.watchlists[activeTab].includes(symbol)) {
+      window.groviqueState.watchlists[activeTab].push(symbol);
+      if (window.showAppToast) {
+        window.showAppToast({
+          title: "Added to Watchlist",
+          message: `${symbol} added to '${activeTab}'.`,
+          type: "success",
+          symbol
+        });
+      }
+    } else {
+      if (window.showAppToast) {
+        window.showAppToast({
+          title: "Already in Watchlist",
+          message: `${symbol} is already present in '${activeTab}'.`,
+          type: "info",
+          symbol
+        });
+      }
+    }
+    this.renderActiveScreen();
+  }
+
+  removeStockFromWatchlist(symbol) {
+    const activeTab = window.groviqueState?.activeWatchlistTab || 'Main Watchlist';
+    if (window.groviqueState?.watchlists?.[activeTab]) {
+      window.groviqueState.watchlists[activeTab] = window.groviqueState.watchlists[activeTab].filter(s => s !== symbol);
+      if (window.showAppToast) {
+        window.showAppToast({
+          title: "Removed from Watchlist",
+          message: `${symbol} removed from '${activeTab}'.`,
+          type: "info",
+          symbol
+        });
+      }
+      this.renderActiveScreen();
+    }
+  }
+
+  openNewPaperIdeaModal() {
+    const symbol = prompt("Enter Stock Symbol for Simulated Idea (e.g. INFY, RELIANCE, SBIN):", "INFY");
+    if (!symbol) return;
+    const sym = symbol.trim().toUpperCase();
+    const stock = window.marketStream.stocks.find(s => s.symbol === sym) || { symbol: sym, ltp: 1500 };
+    const direction = (prompt("Direction (BUY or SELL):", "BUY") || "BUY").toUpperCase();
+    const thesis = prompt("Trade Thesis / Rationale (e.g. VWAP bounce with high volume):", "Technical breakout at session high with VWAP support") || "Standard technical test";
+    
+    const newIdea = {
+      id: 'SIM_' + Date.now().toString().slice(-4),
+      symbol: sym,
+      direction: direction === 'SELL' ? 'SELL' : 'BUY',
+      entryPrice: stock.ltp || 1500,
+      currentPrice: stock.ltp || 1500,
+      stopLoss: Math.round((stock.ltp || 1500) * (direction === 'SELL' ? 1.01 : 0.99)),
+      target: Math.round((stock.ltp || 1500) * (direction === 'SELL' ? 0.98 : 1.02)),
+      quantity: 50,
+      thesis: thesis,
+      status: 'OPEN',
+      entryTime: new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }) + ' IST',
+      slippageFrictionINR: 45.00
+    };
+    
+    if (!window.groviqueState) window.groviqueState = {};
+    if (!window.groviqueState.paperIdeas) window.groviqueState.paperIdeas = [];
+    window.groviqueState.paperIdeas.unshift(newIdea);
+    if (window.showAppToast) {
+      window.showAppToast({
+        title: "Simulated Position Created",
+        message: `${newIdea.direction} ${newIdea.quantity}x ${newIdea.symbol} @ ₹${newIdea.entryPrice}. (SIMULATED)`,
+        type: "success",
+        symbol: newIdea.symbol
+      });
+    }
+    this.renderActiveScreen();
+  }
+
+  closePaperPosition(id) {
+    if (window.groviqueState?.paperIdeas) {
+      const pos = window.groviqueState.paperIdeas.find(p => p.id === id);
+      if (pos) {
+        pos.status = 'CLOSED';
+        pos.exitPrice = pos.currentPrice;
+        pos.exitTime = new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }) + ' IST';
+        if (window.showAppToast) {
+          window.showAppToast({
+            title: "Simulated Position Closed",
+            message: `Closed ${pos.symbol} (${pos.id}). P&L recorded in Journal.`,
+            type: "info",
+            symbol: pos.symbol
+          });
+        }
+        this.renderActiveScreen();
+      }
+    }
+  }
+
+  openCreateAlertModal(symbol = 'RELIANCE') {
+    const sym = prompt("Enter stock symbol for price/volume alert:", symbol);
+    if (!sym) return;
+    const cleanSym = sym.trim().toUpperCase();
+    const cond = prompt("Alert condition (e.g. 'LTP >= ₹1,350', 'RVOL >= 2.0x'):", `LTP >= ₹1,350`);
+    if (!cond) return;
+
+    if (!window.groviqueState) window.groviqueState = {};
+    if (!window.groviqueState.alertsList) window.groviqueState.alertsList = [];
+    const newAlt = {
+      id: 'ALT_' + Date.now().toString().slice(-4),
+      symbol: cleanSym,
+      condition: cond,
+      status: 'ACTIVE',
+      created: new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }) + ' IST',
+      triggers: 0
+    };
+    window.groviqueState.alertsList.unshift(newAlt);
+
+    if (window.showAppToast) {
+      window.showAppToast({
+        title: "Informational Alert Configured",
+        message: `Alert set for ${cleanSym}: ${cond}`,
+        type: "success",
+        symbol: cleanSym
+      });
+    }
+    this.renderActiveScreen();
+  }
+
+  toggleAlertStatus(alertId) {
+    if (window.groviqueState?.alertsList) {
+      const alt = window.groviqueState.alertsList.find(a => a.id === alertId);
+      if (alt) {
+        alt.status = alt.status === 'ACTIVE' ? 'PAUSED' : 'ACTIVE';
+        if (window.showAppToast) {
+          window.showAppToast({
+            title: `Alert ${alt.status === 'ACTIVE' ? 'Resumed' : 'Paused'}`,
+            message: `${alt.symbol} alert status updated to ${alt.status}.`,
+            type: "info",
+            symbol: alt.symbol
+          });
+        }
+        this.renderActiveScreen();
+      }
+    }
+  }
+
+  deleteAlert(alertId) {
+    if (window.groviqueState?.alertsList) {
+      window.groviqueState.alertsList = window.groviqueState.alertsList.filter(a => a.id !== alertId);
+      if (window.showAppToast) {
+        window.showAppToast({
+          title: "Alert Deleted",
+          message: `Alert rule removed successfully.`,
+          type: "info"
+        });
+      }
+      this.renderActiveScreen();
     }
   }
 }

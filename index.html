@@ -4,7 +4,7 @@
   <meta charset="utf-8"/>
   <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
   <meta content="web_dashboard" name="shell-type"/>
-  <title>GROVIQUE LIVE | Where Intelligence Drives Growth.</title>
+  <title>GROVIQUE | Grow with clarity. Analyze with confidence.</title>
   <link rel="icon" type="image/svg+xml" href="favicon.svg"/>
   
   <!-- Fonts -->
@@ -61,7 +61,7 @@
       
       <!-- Brand & Status -->
       <div class="flex items-center gap-3 shrink-0">
-        <div class="flex items-center gap-2.5 cursor-pointer" onclick="window.app.openScreen('live-scanner')">
+        <div class="flex items-center gap-2.5 cursor-pointer" onclick="window.app.openScreen('overview')">
           <div class="w-9 h-9 rounded-xl overflow-hidden flex items-center justify-center glow-cyan shadow-lg shadow-[#00FF88]/10 hover:scale-105 transition-transform bg-[#0E131F] border border-[#00FF88]/40">
             <img src="icon.svg" alt="GROVIQUE" class="w-full h-full object-contain p-0.5" />
           </div>
@@ -70,9 +70,9 @@
               <span class="font-mono text-base tracking-wider font-extrabold text-slate-100 uppercase">
                 GROV<span class="text-[#00FF88]">IQUE</span>
               </span>
-              <span class="px-1.5 py-0.2 rounded bg-[#00F0FF]/15 border border-[#00F0FF]/40 text-[#00F0FF] text-[9px] font-mono font-bold">LIVE</span>
+              <span class="px-1.5 py-0.2 rounded bg-[#00F0FF]/15 border border-[#00F0FF]/40 text-[#00F0FF] text-[9px] font-mono font-bold">TERMINAL</span>
             </div>
-            <span class="text-[9px] font-sans font-medium text-slate-400 -mt-0.5 tracking-tight">Where Intelligence Drives Growth.</span>
+            <span class="text-[9px] font-sans font-medium text-slate-400 -mt-0.5 tracking-tight">Grow with clarity. Analyze with confidence.</span>
           </div>
         </div>
 
@@ -257,11 +257,72 @@
       
       <!-- Nav items -->
       <nav class="flex flex-col gap-1 px-2 font-mono text-xs">
-        <a href="javascript:void(0)" onclick="window.app.openScreen('live-scanner')" data-path="live-scanner"
+        <!-- PRIMARY MARKET TERMINAL SCREENS -->
+        <div class="px-2 pt-1 pb-0.5">
+          <span class="text-[9px] uppercase tracking-wider text-slate-500 font-bold">Market Intelligence</span>
+        </div>
+
+        <a href="javascript:void(0)" onclick="window.app.openScreen('overview')" data-path="overview"
            class="flex items-center gap-2 px-3 py-2 bg-[#00FF88] text-[#002b11] font-bold rounded-lg shadow-md transition-all">
-          <span class="material-symbols-outlined text-[18px]">radar</span>
-          <span>Command Center</span>
+          <span class="material-symbols-outlined text-[18px]">dashboard</span>
+          <span>Market Overview</span>
         </a>
+
+        <a href="javascript:void(0)" onclick="window.app.openScreen('scanner')" data-path="scanner"
+           class="flex items-center justify-between px-3 py-2 rounded-lg text-slate-400 hover:bg-[#191c22] hover:text-slate-100 transition-all">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-[18px]">radar</span>
+            <span>Stock Scanner</span>
+          </div>
+          <span class="px-1.5 py-0.2 rounded bg-[#00FF88]/20 text-[#00FF88] text-[9px] font-bold">WHY-MATCH</span>
+        </a>
+
+        <a href="javascript:void(0)" onclick="window.app.openScreen('deep-dive')" data-path="deep-dive"
+           class="flex items-center gap-2 px-3 py-2 rounded-lg text-slate-400 hover:bg-[#191c22] hover:text-slate-100 transition-all">
+          <span class="material-symbols-outlined text-[18px]">candlestick_chart</span>
+          <span>Stock Detail &amp; Charts</span>
+        </a>
+
+        <a href="javascript:void(0)" onclick="window.app.openScreen('watchlists')" data-path="watchlists"
+           class="flex items-center gap-2 px-3 py-2 rounded-lg text-slate-400 hover:bg-[#191c22] hover:text-slate-100 transition-all">
+          <span class="material-symbols-outlined text-[18px]">format_list_bulleted</span>
+          <span>Watchlists</span>
+        </a>
+
+        <a href="javascript:void(0)" onclick="window.app.openScreen('market-activity')" data-path="market-activity"
+           class="flex items-center gap-2 px-3 py-2 rounded-lg text-slate-400 hover:bg-[#191c22] hover:text-slate-100 transition-all">
+          <span class="material-symbols-outlined text-[18px]">trending_up</span>
+          <span>Market Activity</span>
+        </a>
+
+        <a href="javascript:void(0)" onclick="window.app.openScreen('alerts')" data-path="alerts"
+           class="flex items-center gap-2 px-3 py-2 rounded-lg text-slate-400 hover:bg-[#191c22] hover:text-slate-100 transition-all">
+          <span class="material-symbols-outlined text-[18px]">notifications_active</span>
+          <span>Alerts Centre</span>
+        </a>
+
+        <a href="javascript:void(0)" onclick="window.app.openScreen('paper-journal')" data-path="paper-journal"
+           class="flex items-center justify-between px-3 py-2 rounded-lg text-slate-400 hover:bg-[#191c22] hover:text-slate-100 transition-all">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-[18px]">menu_book</span>
+            <span>Paper Journal</span>
+          </div>
+          <span class="px-1.5 py-0.2 rounded bg-[#00F0FF]/20 text-[#00F0FF] text-[9px] font-bold">SIMULATED</span>
+        </a>
+
+        <a href="javascript:void(0)" onclick="window.app.openScreen('learning-centre')" data-path="learning-centre"
+           class="flex items-center justify-between px-3 py-2 rounded-lg text-slate-400 hover:bg-[#191c22] hover:text-slate-100 transition-all">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-[18px]">school</span>
+            <span>Learning Centre</span>
+          </div>
+          <span class="px-1.5 py-0.2 rounded bg-[#FFB800]/20 text-[#FFB800] text-[9px] font-bold">GUIDES</span>
+        </a>
+
+        <!-- ADVANCED ANALYTICS & STUDIOS -->
+        <div class="px-2 pt-2.5 pb-0.5 border-t border-[#1E293B]/70 mt-1">
+          <span class="text-[9px] uppercase tracking-wider text-slate-500 font-bold">Advanced Studios</span>
+        </div>
 
         <a href="javascript:void(0)" onclick="window.app.openScreen('investment-calculators')" data-path="investment-calculators"
            class="flex items-center justify-between px-3 py-2 rounded-lg bg-[#111622] text-[#FFB800] hover:bg-[#191c22] border border-[#FFB800]/50 hover:border-[#FFB800] transition-all group shadow-sm">
@@ -270,66 +331,6 @@
             <span class="font-bold">Calculators Suite</span>
           </div>
           <span class="px-1.5 py-0.2 rounded bg-[#FFB800] text-[#090B10] text-[9px] font-bold">ALL-IN-1</span>
-        </a>
-
-        <a href="javascript:void(0)" onclick="window.app.openScreen('screener-heatmap')" data-path="screener-heatmap"
-           class="flex items-center gap-2 px-3 py-2 rounded-lg text-slate-400 hover:bg-[#191c22] hover:text-slate-100 transition-all">
-          <span class="material-symbols-outlined text-[18px]">bubble_chart</span>
-          <span>Screener & Heatmap</span>
-        </a>
-
-        <a href="javascript:void(0)" onclick="window.app.openScreen('news-desk')" data-path="news-desk"
-           class="flex items-center justify-between px-3 py-2 rounded-lg text-slate-400 hover:bg-[#191c22] hover:text-slate-100 transition-all">
-          <div class="flex items-center gap-2">
-            <span class="material-symbols-outlined text-[18px]">newspaper</span>
-            <span>News &amp; Catalysts</span>
-          </div>
-          <span class="px-1.5 py-0.2 rounded bg-[#00FF88]/20 text-[#00FF88] text-[9px] font-bold">LIVE</span>
-        </a>
-
-        <a href="javascript:void(0)" onclick="window.app.openScreen('deep-dive')" data-path="deep-dive"
-           class="flex items-center gap-2 px-3 py-2 rounded-lg text-slate-400 hover:bg-[#191c22] hover:text-slate-100 transition-all">
-          <span class="material-symbols-outlined text-[18px]">bolt</span>
-          <span>Deep-Dive & Charts</span>
-        </a>
-
-        <a href="javascript:void(0)" onclick="window.app.openScreen('watchlist-alerts')" data-path="watchlist-alerts"
-           class="flex items-center gap-2 px-3 py-2 rounded-lg text-slate-400 hover:bg-[#191c22] hover:text-slate-100 transition-all">
-          <span class="material-symbols-outlined text-[18px]">notifications_active</span>
-          <span>Watchlist & Alerts</span>
-        </a>
-
-        <a href="javascript:void(0)" onclick="window.app.openScreen('journal-analytics')" data-path="journal-analytics"
-           class="flex items-center gap-2 px-3 py-2 rounded-lg text-slate-400 hover:bg-[#191c22] hover:text-slate-100 transition-all">
-          <span class="material-symbols-outlined text-[18px]">assignment</span>
-          <span>Journal &amp; Analytics</span>
-        </a>
-
-        <a href="javascript:void(0)" onclick="window.app.openScreen('backtester-lab')" data-path="backtester-lab"
-           class="flex items-center justify-between px-3 py-2 rounded-lg text-slate-400 hover:bg-[#191c22] hover:text-slate-100 transition-all">
-          <div class="flex items-center gap-2">
-            <span class="material-symbols-outlined text-[18px]">biotech</span>
-            <span>Backtesting Lab</span>
-          </div>
-          <span class="px-1.5 py-0.2 rounded bg-[#00F0FF]/20 text-[#00F0FF] text-[9px] font-bold">180D</span>
-        </a>
-
-        <a href="javascript:void(0)" onclick="window.app.openPositionsModal()" data-path="sandbox-positions"
-           class="flex items-center justify-between px-3 py-2 rounded-lg text-slate-400 hover:bg-[#191c22] hover:text-slate-100 transition-all">
-          <div class="flex items-center gap-2">
-            <span class="material-symbols-outlined text-[18px]">account_balance_wallet</span>
-            <span>Sandbox Desk</span>
-          </div>
-          <span class="px-1.5 py-0.2 rounded bg-[#00F0FF] text-[#090B10] text-[10px] font-bold">2</span>
-        </a>
-
-        <a href="javascript:void(0)" onclick="window.app.openScreen('rag-mcp')" data-path="rag-mcp"
-           class="flex items-center justify-between px-3 py-2 rounded-lg text-slate-400 hover:bg-[#191c22] hover:text-slate-100 transition-all">
-          <div class="flex items-center gap-2">
-            <span class="material-symbols-outlined text-[18px] text-[#00F0FF]">hub</span>
-            <span>RAG &amp; MCP Studio</span>
-          </div>
-          <span class="px-1.5 py-0.2 rounded bg-[#00F0FF]/20 text-[#00F0FF] text-[9px] font-bold">AI</span>
         </a>
 
         <a href="javascript:void(0)" onclick="window.app.openScreen('multi-agents')" data-path="multi-agents"
@@ -341,6 +342,33 @@
           <span class="px-1.5 py-0.2 rounded bg-[#00FF88]/20 text-[#00FF88] text-[9px] font-bold">5 AGENTS</span>
         </a>
 
+        <a href="javascript:void(0)" onclick="window.app.openScreen('rag-mcp')" data-path="rag-mcp"
+           class="flex items-center justify-between px-3 py-2 rounded-lg text-slate-400 hover:bg-[#191c22] hover:text-slate-100 transition-all">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-[18px] text-[#00F0FF]">hub</span>
+            <span>RAG &amp; MCP Studio</span>
+          </div>
+          <span class="px-1.5 py-0.2 rounded bg-[#00F0FF]/20 text-[#00F0FF] text-[9px] font-bold">AI</span>
+        </a>
+
+        <a href="javascript:void(0)" onclick="window.app.openScreen('news-desk')" data-path="news-desk"
+           class="flex items-center justify-between px-3 py-2 rounded-lg text-slate-400 hover:bg-[#191c22] hover:text-slate-100 transition-all">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-[18px]">newspaper</span>
+            <span>News &amp; Catalysts</span>
+          </div>
+          <span class="px-1.5 py-0.2 rounded bg-[#00FF88]/20 text-[#00FF88] text-[9px] font-bold">LIVE</span>
+        </a>
+
+        <a href="javascript:void(0)" onclick="window.app.openScreen('backtester-lab')" data-path="backtester-lab"
+           class="flex items-center justify-between px-3 py-2 rounded-lg text-slate-400 hover:bg-[#191c22] hover:text-slate-100 transition-all">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-[18px]">biotech</span>
+            <span>Backtesting Lab</span>
+          </div>
+          <span class="px-1.5 py-0.2 rounded bg-[#00F0FF]/20 text-[#00F0FF] text-[9px] font-bold">180D</span>
+        </a>
+
         <a href="javascript:void(0)" onclick="window.app.openScreen('user-settings')" data-path="user-settings"
            class="flex items-center gap-2 px-3 py-2 rounded-lg text-slate-400 hover:bg-[#191c22] hover:text-slate-100 transition-all">
           <span class="material-symbols-outlined text-[18px]">settings</span>
@@ -348,11 +376,7 @@
         </a>
       </nav>
     </div>
-          <span class="material-symbols-outlined text-[18px]">settings</span>
-          <span>Settings &amp; Broker Keys</span>
-        </a>
-      </nav>
-    </div>
+
 
     <!-- Bottom Rail Controls -->
     <div class="px-3 flex flex-col gap-2 border-t border-[#1E293B] pt-3">
@@ -425,6 +449,7 @@
   <script src="js/alerts.js"></script>
   <script src="js/calculators.js"></script>
   <script src="js/components.js"></script>
+  <script src="js/groviquePages.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>
