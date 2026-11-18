@@ -49,7 +49,17 @@
 - **MCP Server & Client**: Standardized tools (`get_quote`, `get_technical_indicators`, `get_user_margin`, `place_order`) compliant with Model Context Protocol.
 - **RAG & MCP Studio UI**: Interactive diagnostics suite in the terminal to inspect retrieved chunk context, similarity scores, and tool invocations in real time.
 
-### 8. 📰 News Intelligence & Market Catalyst Wire
+### 8. 🤖 Multi-Agent Swarm Intelligence Studio
+- **5 Specialized Autonomous Agents**:
+  1. **Agent Scout**: Global macro (crude, bond yields), domestic Indian policy (RBI liquidity, FII/DII flows), and corporate regulatory filings.
+  2. **Agent Analyser**: Quantitative price action, VWAP distance, 9/20 EMA alignment, RSI(14) momentum, and L2 5-depth order book balance.
+  3. **Agent Picker**: Universe screener scanning all 50 NSE stocks to rank and pick high-alpha intraday breakout opportunities.
+  4. **Agent Risk**: Capital preservation officer enforcing the 1% risk limit, dynamic 5x MIS margin sizing, and mandatory 15:15 IST auto-square off.
+  5. **Agent Orchestrator**: Lead Investment Strategist synthesizing agent deliberation into a consensus directive and execution ticket.
+- **Interactive Terminal Studio**: Watch real-time message passing, thought logs, and 1-click execution routing to Groww Trade API.
+- **Python Swarm Runner**: Standalone algorithmic script in [`scripts/multi_agent_swarm.py`](scripts/multi_agent_swarm.py).
+
+### 9. 📰 News Intelligence & Market Catalyst Wire
 - Real-time global, national, and company-specific news monitoring.
 - AI-driven impact analysis: predicts potential price reaction, trade entry viability, and suggested win strategies.
 

@@ -14,14 +14,16 @@ try {
   console.warn('Could not load mockData.js in server:', e.message);
 }
 
-// Load RAG Engine & Model Context Protocol (MCP) Server
+// Load RAG Engine, Model Context Protocol (MCP) Server & Multi-Agent Swarm
 let ragEngine = null;
 let mcpServer = null;
+let multiAgentSwarm = null;
 try {
   ragEngine = require('./server/ragEngine');
   mcpServer = require('./server/mcpServer');
+  multiAgentSwarm = require('./server/multiAgentSystem');
 } catch (e) {
-  console.warn('[Server] Could not load RAG/MCP modules:', e.message);
+  console.warn('[Server] Could not load RAG/MCP/Agent modules:', e.message);
 }
 
 const PORT = 3000;
@@ -149,6 +151,104 @@ const server = http.createServer(async (req, res) => {
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({ count: playbooks.length, playbooks }));
     return;
+  }
+
+  // ========================================================
+  // API ENDPOINT: /api/agents/roster (Get Multi-Agent Swarm Roster)
+  // ========================================================
+  if (pathname === '/api/agents/roster' && req.method === 'GET') {
+    const roster = multiAgentSwarm ? multiAgentSwarm.getRoster() : [];
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ agents: roster, count: roster.length }));
+    return;
+  }
+
+  // ========================================================
+  // API ENDPOINT: /api/agents/pipeline (Execute Multi-Agent Cooperative Pipeline)
+  // ========================================================
+  if (pathname === '/api/agents/pipeline' && req.method === 'POST') {
+    try {
+      const body = await parseJsonBody(req);
+      const symbol = (body.symbol || 'RELIANCE').toUpperCase();
+      const apiKey = body.apiKey || req.headers['x-api-key'] || '';
+      
+      const stock = INITIAL_STOCKS.find(s => s.symbol.toUpperCase() === symbol) || INITIAL_STOCKS[0] || {
+        symbol,
+        name: `${symbol} Ltd`,
+        ltp: 1339.70,
+        vwap: 1339.00,
+        rsi: 58.4,
+        rvol: 1.85,
+        sector: 'Nifty 50 Equity'
+      };
+
+      if (!multiAgentSwarm) {
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Multi-Agent Swarm system not initialized' }));
+        return;
+      }
+
+      const result = await multiAgentSwarm.runFullPipeline(symbol, stock, INITIAL_STOCKS, apiKey);
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify(result));
+      return;
+    } catch (err) {
+      res.writeHead(500, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: err.message }));
+      return;
+    }
+  }
+
+  // ========================================================
+  // API ENDPOINT: /api/agents/picker (Run Stock Picker across Universe)
+  // ========================================================
+  if (pathname === '/api/agents/picker' && req.method === 'POST') {
+    try {
+      const body = await parseJsonBody(req);
+      const apiKey = body.apiKey || req.headers['x-api-key'] || '';
+
+      if (!multiAgentSwarm) {
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Multi-Agent Swarm system not initialized' }));
+        return;
+      }
+
+      const pickerReport = await multiAgentSwarm.picker.run(INITIAL_STOCKS, apiKey);
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify(pickerReport));
+      return;
+    } catch (err) {
+      res.writeHead(500, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: err.message }));
+      return;
+    }
+  }
+
+  // ========================================================
+  // API ENDPOINT: /api/agents/scout (Run News Scout Agent)
+  // ========================================================
+  if (pathname === '/api/agents/scout' && req.method === 'POST') {
+    try {
+      const body = await parseJsonBody(req);
+      const symbol = (body.symbol || 'RELIANCE').toUpperCase();
+      const apiKey = body.apiKey || req.headers['x-api-key'] || '';
+      const stock = INITIAL_STOCKS.find(s => s.symbol.toUpperCase() === symbol) || INITIAL_STOCKS[0];
+
+      if (!multiAgentSwarm) {
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Multi-Agent Swarm system not initialized' }));
+        return;
+      }
+
+      const scoutReport = await multiAgentSwarm.scout.run(symbol, stock, apiKey);
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify(scoutReport));
+      return;
+    } catch (err) {
+      res.writeHead(500, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: err.message }));
+      return;
+    }
   }
 
   // ========================================================

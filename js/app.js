@@ -214,6 +214,9 @@ class GroviqueApp {
       case 'rag-mcp':
         mainContainer.innerHTML = UIComponents.renderRagMcpStudio(stream);
         break;
+      case 'multi-agents':
+        mainContainer.innerHTML = UIComponents.renderAgentSwarmStudio(stream);
+        break;
       case 'sandbox-positions':
         mainContainer.innerHTML = UIComponents.renderJournalAnalytics(stream);
         this.openPositionsModal();

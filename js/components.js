@@ -3190,6 +3190,152 @@ class UIComponents {
       </div>
     `;
   }
+
+  // ========================================================
+  // MULTI-AGENT SWARM STUDIO (5 SPECIALIZED AI AGENTS)
+  // ========================================================
+  static renderAgentSwarmStudio(stream) {
+    const selected = stream ? stream.getSelectedStock() : { symbol: 'RELIANCE', name: 'Reliance Industries Ltd', ltp: 1339.70 };
+    const universe = stream ? stream.stocks : [];
+
+    const agents = [
+      { id: 'scout', name: 'Agent Scout', role: 'Global, Domestic & Corporate News', icon: 'newspaper', color: '#00F0FF', desc: 'Monitors global crude, US 10Y yields, RBI policies, and real-time corporate filings / earnings surprises.' },
+      { id: 'analyser', name: 'Agent Analyser', role: 'Quant & Technicals', icon: 'query_stats', color: '#00FF88', desc: 'Evaluates VWAP alignment, 9/20 EMA crossovers, RSI(14) momentum, and L2 market depth liquidity.' },
+      { id: 'picker', name: 'Agent Picker', role: 'Stock Selection & Screener', icon: 'fact_check', color: '#FFB800', desc: 'Scans the 50-stock NSE universe, ranks relative strength, and identifies top breakout opportunities.' },
+      { id: 'risk', name: 'Agent Risk', role: 'Capital Preservation & RMS', icon: 'security', color: '#FF2A6D', desc: 'Enforces 1.0% portfolio loss limits, computes dynamic 5x MIS leverage, and safeguards 15:15 IST square-off.' },
+      { id: 'orchestrator', name: 'Agent Orchestrator', role: 'Lead Strategist & Execution', icon: 'military_tech', color: '#9d4edd', desc: 'Conducts swarm deliberation, resolves agent disagreements, and drafts the verified institutional order ticket.' }
+    ];
+
+    return `
+      <div class="flex flex-col gap-5 p-4 sm:p-6 max-w-7xl mx-auto font-mono text-slate-200">
+        
+        <!-- HEADER HERO -->
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-4 border-b border-[#1E293B] gap-4">
+          <div class="flex flex-col gap-1">
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-[#00FF88] text-[28px]">groups</span>
+              <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-slate-100">Multi-Agent Swarm Intelligence Studio</h1>
+            </div>
+            <p class="text-xs text-slate-400">
+              Cooperative AI agent team: News Scout • Technical Analyser • Universe Picker • Risk Officer • Lead Orchestrator
+            </p>
+          </div>
+
+          <!-- Quick Action Buttons -->
+          <div class="flex items-center gap-2 flex-wrap">
+            <button type="button" onclick="window.agentSwarmClient.runUniverseScanner()"
+                    class="px-3 py-2 rounded-xl bg-[#111622] hover:bg-[#191c22] border border-[#FFB800]/40 hover:border-[#FFB800] text-[#FFB800] font-bold text-xs flex items-center gap-1.5 transition-all shadow-md">
+              <span class="material-symbols-outlined text-[16px]">radar</span>
+              <span>RUN STOCK PICKER (ALL 50 STOCKS)</span>
+            </button>
+            <button type="button" onclick="window.agentSwarmClient.runSwarm('${selected.symbol}')"
+                    class="px-4 py-2 rounded-xl bg-gradient-to-r from-[#00FF88] to-[#00F0FF] text-[#090B10] font-bold text-xs flex items-center gap-1.5 shadow-xl hover:brightness-110 transition-all">
+              <span class="material-symbols-outlined text-[18px]">rocket_launch</span>
+              <span>DEPLOY SWARM ON ${selected.symbol}</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- TICKER CONTROLS & SWITCHER -->
+        <div class="p-3.5 rounded-xl bg-[#111622] border border-[#1E293B] flex items-center justify-between flex-wrap gap-3 shadow-md">
+          <div class="flex items-center gap-2">
+            <span class="text-xs text-slate-400 uppercase font-bold">Target Stock:</span>
+            <span class="px-2.5 py-1 rounded-lg bg-[#191c22] border border-[#00FF88]/50 text-[#00FF88] font-bold text-xs">
+              ${selected.symbol} (₹${selected.ltp.toFixed(2)})
+            </span>
+            <span class="text-[11px] text-slate-400 hidden md:inline">• ${selected.name}</span>
+          </div>
+
+          <!-- Quick High-Liquidity Pills -->
+          <div class="flex items-center gap-1.5 flex-wrap">
+            <span class="text-[10px] text-slate-500 mr-1">Switch:</span>
+            ${['RELIANCE', 'TCS', 'HDFCBANK', 'TATAMOTORS', 'INFY'].map(sym => `
+              <button type="button" onclick="window.marketStream.setSelectedStock('${sym}'); window.app.renderActiveScreen();"
+                      class="px-2 py-0.5 rounded text-[11px] font-bold transition-all ${sym === selected.symbol ? 'bg-[#00FF88] text-[#090B10]' : 'bg-[#191c22] text-slate-300 hover:text-white border border-slate-700'}">
+                ${sym}
+              </button>
+            `).join('')}
+          </div>
+        </div>
+
+        <!-- AGENTS ROSTER GRID (5 SPECIALISTS) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+          ${agents.map(a => `
+            <div class="p-3 rounded-xl bg-[#111622] border border-slate-800 hover:border-slate-700 flex flex-col justify-between gap-2.5 shadow-lg transition-all">
+              <div class="flex flex-col gap-1.5">
+                <div class="flex items-center justify-between">
+                  <div class="w-8 h-8 rounded-lg flex items-center justify-center font-bold" style="background-color: ${a.color}15; color: ${a.color}">
+                    <span class="material-symbols-outlined text-[18px]">${a.icon}</span>
+                  </div>
+                  <span id="agentStatusBadge-${a.id}" class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-slate-800 text-slate-400">
+                    READY
+                  </span>
+                </div>
+                <h3 class="font-bold text-xs text-slate-100">${a.name}</h3>
+                <span class="text-[10px] font-semibold" style="color: ${a.color}">${a.role}</span>
+                <p class="text-[10px] text-slate-400 leading-normal line-clamp-3">${a.desc}</p>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+
+        <!-- 2-COLUMN WORKSPACE: DELIBERATION STREAM (LEFT) & VERDICT TICKET (RIGHT) -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+          
+          <!-- LEFT 7 COLS: SWARM DELIBERATION TERMINAL -->
+          <div class="lg:col-span-7 flex flex-col gap-2">
+            <div class="bg-[#111622] border border-[#1E293B] rounded-xl overflow-hidden shadow-xl flex flex-col">
+              <div class="px-4 py-2.5 bg-[#0E131F] border-b border-slate-800 flex items-center justify-between text-xs">
+                <div class="flex items-center gap-2">
+                  <span class="w-2 h-2 rounded-full bg-[#00FF88] pulse-live"></span>
+                  <span class="font-bold text-slate-200">Swarm Deliberation & Thought Stream</span>
+                </div>
+                <span class="text-[10px] text-slate-500 font-mono">Real-Time Multi-Agent Feed</span>
+              </div>
+              <div id="agentSwarmTerminalLog" class="p-3 overflow-y-auto max-h-[520px] min-h-[380px] flex flex-col gap-2 bg-[#090B10]">
+                ${window.agentSwarmClient ? window.agentSwarmClient.renderLogsHtml() : '<div class="text-slate-500 text-xs text-center py-10">Initializing Swarm Client...</div>'}
+              </div>
+            </div>
+          </div>
+
+          <!-- RIGHT 5 COLS: SYNTHESIS & EXECUTION TICKET -->
+          <div class="lg:col-span-5 flex flex-col gap-3">
+            <div id="agentSwarmVerdictContainer">
+              <div class="p-5 rounded-xl bg-[#111622] border border-slate-800 shadow-xl flex flex-col items-center justify-center text-center gap-3 min-h-[380px]">
+                <div class="w-12 h-12 rounded-full bg-[#9d4edd]/20 border border-[#9d4edd] flex items-center justify-center text-[#9d4edd]">
+                  <span class="material-symbols-outlined text-[24px]">military_tech</span>
+                </div>
+                <div class="flex flex-col gap-1">
+                  <h3 class="font-bold text-sm text-slate-100">Swarm Synthesis Ready</h3>
+                  <p class="text-xs text-slate-400 max-w-xs">
+                    Deploy the 5-agent team on <span class="text-[#00FF88] font-bold">${selected.symbol}</span> to synthesize the actionable trade directive.
+                  </p>
+                </div>
+                <button type="button" onclick="window.agentSwarmClient.runSwarm('${selected.symbol}')"
+                        class="px-4 py-2 rounded-lg bg-gradient-to-r from-[#00FF88] to-[#00F0FF] text-[#090B10] font-bold text-xs shadow-lg hover:brightness-110 transition-all flex items-center gap-1.5">
+                  <span class="material-symbols-outlined text-[16px]">play_arrow</span>
+                  <span>Start Swarm Deliberation</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Swarm Architecture Specs Note -->
+            <div class="p-3.5 rounded-xl bg-[#111622]/60 border border-slate-800 text-[11px] text-slate-400 flex flex-col gap-1.5">
+              <div class="flex items-center gap-1.5 text-slate-300 font-bold">
+                <span class="material-symbols-outlined text-[15px] text-[#00F0FF]">info</span>
+                <span>Cooperative Consensus Protocol</span>
+              </div>
+              <p class="leading-relaxed">
+                The Swarm uses a weighted multi-agent consensus algorithm. The Lead Orchestrator evaluates News Sentiment (30%), Quantitative Technicals (50%), and RMS Risk Parameters (20%) before issuing the approved trade plan.
+              </p>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    `;
+  }
 }
 
 window.UIComponents = UIComponents;
