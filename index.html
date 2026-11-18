@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta content="web_dashboard" name="shell-type"/>
+  <title>GROVIQUE LIVE | Where Intelligence Drives Growth.</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg"/>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#00FF88",
+            "primary-container": "#00e676",
+            "on-primary": "#003918",
+            "tertiary": "#00F0FF",
+            "tertiary-container": "#00dcf5",
+            "secondary": "#FF2A6D",
+            "secondary-container": "#cb0149",
+            "arcade-amber": "#FFB800",
+            "surface-dim": "#090B10",
+            "surface-container-lowest": "#090B10",
+            "surface-container-low": "#111622",
+            "surface-container": "#191c22",
+            "surface-container-high": "#272a31",
+            "surface-container-highest": "#32353c",
+            "outline-variant": "#1E293B"
+          },
+          fontFamily: {
+            sans: ["DM Sans", "sans-serif"],
+            mono: ["JetBrains Mono", "monospace"]
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- Arcade Styling -->
+  <link rel="stylesheet" href="css/arcade.css"/>
+</head>
+
+<body class="bg-[#090B10] font-sans text-slate-100 select-none min-h-screen">
+  
+  <!-- ==========================================
+       TOP GLOBAL TELEMETRY HEADER & MARKET CLOCK
+       ========================================== -->
+  <header class="fixed top-0 left-0 right-0 z-50 bg-[#090B10]/95 backdrop-blur-xl border-b border-[#1E293B]">
+    <!-- Top Row -->
+    <div class="h-14 w-full px-4 md:px-6 flex items-center justify-between gap-4">
+      
+      <!-- Brand & Status -->
+      <div class="flex items-center gap-3 shrink-0">
+        <div class="flex items-center gap-2.5 cursor-pointer" onclick="window.app.openScreen('live-scanner')">
+          <div class="w-9 h-9 rounded-xl overflow-hidden flex items-center justify-center glow-cyan shadow-lg shadow-[#00FF88]/10 hover:scale-105 transition-transform bg-[#0E131F] border border-[#00FF88]/40">
+            <img src="icon.svg" alt="GROVIQUE" class="w-full h-full object-contain p-0.5" />
+          </div>
+          <div class="flex flex-col">
+            <div class="flex items-center gap-1.5">
+              <span class="font-mono text-base tracking-wider font-extrabold text-slate-100 uppercase">
+                GROV<span class="text-[#00FF88]">IQUE</span>
+              </span>
+              <span class="px-1.5 py-0.2 rounded bg-[#00F0FF]/15 border border-[#00F0FF]/40 text-[#00F0FF] text-[9px] font-mono font-bold">LIVE</span>
+            </div>
+            <span class="text-[9px] font-sans font-medium text-slate-400 -mt-0.5 tracking-tight">Where Intelligence Drives Growth.</span>
+          </div>
+        </div>
+
+        <div class="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#191c22] border border-[#1E293B]">
+          <span id="liveClockDot" class="w-2 h-2 rounded-full bg-[#FFB800]"></span>
+          <span id="liveClockDisplay" class="font-mono text-xs text-[#FFB800] tracking-wide">● CLOSED IST</span>
+        </div>
+      </div>
+
+      <!-- Live Indices Ticker -->
+      <div class="hidden 2xl:flex items-center gap-2.5 overflow-x-auto py-1 font-mono text-xs shrink-0">
+        <div class="flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#111622] border border-[#1E293B]">
+          <span class="text-slate-400">NIFTY 50:</span>
+          <span class="text-slate-100 font-bold">25,144.30</span>
+          <span class="text-[#FF2A6D] text-[10px]">(-0.61%)</span>
+        </div>
+        <div class="flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#111622] border border-[#1E293B]">
+          <span class="text-slate-400">BANK NIFTY:</span>
+          <span class="text-slate-100 font-bold">61,034.10</span>
+          <span class="text-[#FF2A6D] text-[10px]">(-0.79%)</span>
+        </div>
+        <div class="flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#111622] border border-[#1E293B]">
+          <span class="text-slate-400">INDIA VIX:</span>
+          <span class="text-[#00F0FF] font-bold">13.85</span>
+          <span class="text-[#00FF88] text-[10px]">(+2.10%)</span>
+        </div>
+      </div>
+
+      <!-- Global Stock Omnibox Search Bar -->
+      <div id="globalStockSearchContainer" class="relative flex-1 min-w-[200px] sm:min-w-[260px] md:min-w-[320px] max-w-md mx-2 z-50">
+        <div class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#111622] border border-[#1E293B] hover:border-slate-700 focus-within:border-[#00FF88] focus-within:bg-[#090B10] focus-within:ring-1 focus-within:ring-[#00FF88]/30 transition-all cursor-text"
+             onclick="document.getElementById('globalStockSearchInput').focus()">
+          <span class="material-symbols-outlined text-[18px] text-[#00FF88] shrink-0">search</span>
+          <input type="text" id="globalStockSearchInput"
+                 placeholder="Search stock (e.g. RELIANCE, TCS, INFY)..."
+                 class="w-full bg-transparent border-none outline-none font-mono text-xs text-slate-100 placeholder-slate-500 block"
+                 autocomplete="off"
+                 onfocus="window.app && window.app.handleStockSearchFocus()"
+                 oninput="window.app && window.app.handleStockSearch(this.value)"
+                 onkeydown="window.app && window.app.handleStockSearchKeydown(event)" />
+          <button type="button" id="globalSearchClearBtn" onclick="event.stopPropagation(); window.app && window.app.clearStockSearch();"
+                  class="hidden text-slate-400 hover:text-slate-200">
+            <span class="material-symbols-outlined text-[15px]">close</span>
+          </button>
+          <kbd class="hidden sm:inline-flex items-center justify-center px-1.5 py-0.5 rounded bg-[#191c22] border border-slate-700 text-[10px] font-mono text-slate-400 select-none shadow-sm cursor-pointer" onclick="event.stopPropagation(); document.getElementById('globalStockSearchInput').focus()">/</kbd>
+        </div>
+
+        <!-- Autocomplete Dropdown List (Guaranteed Width so it never shrinks) -->
+        <div id="globalStockSearchResults"
+             class="hidden absolute top-full left-0 w-80 sm:w-96 md:w-[420px] mt-2 bg-[#0E131F]/98 border border-[#1E293B] rounded-xl shadow-2xl overflow-hidden z-50 backdrop-blur-2xl max-h-[440px] flex flex-col">
+        </div>
+      </div>
+
+      <!-- Session Phase Simulator & Quick Actions -->
+      <div class="flex items-center gap-2 shrink-0">
+        <!-- 5 Market Phases (Only on 2XL screens to preserve header search width) -->
+        <div class="hidden 2xl:flex items-center gap-1 p-0.5 rounded-lg bg-[#111622] border border-[#1E293B]">
+          <button type="button" data-phase-btn="PRE_OPEN" onclick="window.marketStream.setPhase('PRE_OPEN')"
+                  class="px-2 py-1 rounded font-mono text-xs text-slate-400 hover:text-slate-100 transition-colors">09:00 Pre-Open</button>
+          <button type="button" data-phase-btn="CAUTION" onclick="window.marketStream.setPhase('CAUTION')"
+                  class="px-2 py-1 rounded font-mono text-xs text-slate-400 hover:text-slate-100 transition-colors">09:15 Caution 15m</button>
+          <button type="button" data-phase-btn="PRIME_BREAKOUT" onclick="window.marketStream.setPhase('PRIME_BREAKOUT')"
+                  class="px-2.5 py-1 rounded font-mono text-xs text-[#002b11] bg-[#00FF88] border border-[#00FF88] font-bold flex items-center gap-1 shadow-md">
+            <span class="w-1.5 h-1.5 rounded-full bg-[#002b11] animate-ping"></span>
+            09:30 Prime Breakout
+          </button>
+          <button type="button" data-phase-btn="MIDDAY_CHOP" onclick="window.marketStream.setPhase('MIDDAY_CHOP')"
+                  class="px-2 py-1 rounded font-mono text-xs text-slate-400 hover:text-slate-100 transition-colors">11:00 Chop Filter</button>
+          <button type="button" data-phase-btn="SQUARE_OFF" onclick="window.marketStream.setPhase('SQUARE_OFF')"
+                  class="px-2 py-1 rounded font-mono text-xs text-slate-400 hover:text-slate-100 transition-colors">15:15 Square-Off</button>
+        </div>
+
+        <!-- Quick Catalyst Simulator Button -->
+        <button type="button" onclick="window.marketStream.simulateBreakingCatalyst()"
+                class="hidden lg:flex items-center gap-1 px-2.5 py-1 rounded bg-[#191c22] border border-[#FFB800]/40 text-[#FFB800] hover:border-[#FFB800] font-mono text-xs font-bold transition-all" title="Simulate Breaking News Catalyst (B)">
+          <span class="material-symbols-outlined text-[15px]">bolt</span>
+          <span>Catalyst</span>
+        </button>
+
+        <!-- Broker Mode Switcher Pill (Groww Live vs Sandbox) -->
+        <button type="button" id="headerBrokerModePill" onclick="window.app.openScreen('user-settings')"
+                class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg border font-mono text-xs cursor-pointer bg-[#191c22] text-[#00F0FF] border-[#00F0FF]/40 hover:border-[#00F0FF] transition-all"
+                title="Click to configure Groww API or switch between Sandbox and Live Trading">
+          <span class="w-2 h-2 rounded-full bg-[#00F0FF]"></span>
+          <span class="font-bold">SANDBOX</span>
+        </button>
+
+        <!-- Weekend / Holiday Practice Simulator Mode Pill -->
+        <button type="button" id="headerSimulatorModePill" onclick="window.nseCalendar.toggleSimulatorMode()"
+                class="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded-lg border font-mono text-xs cursor-pointer bg-[#191c22] text-[#00F0FF] border-[#00F0FF]/40 hover:border-[#00F0FF] transition-all"
+                title="Toggle Weekend / Holiday Practice Simulator Mode">
+          <span class="w-2 h-2 rounded-full bg-[#00F0FF]"></span>
+          <span class="font-bold">SIMULATOR</span>
+        </button>
+
+        <!-- NSE Trading Holidays Calendar Button -->
+        <button type="button" onclick="window.app.openNSEHolidaysModal()"
+                class="hidden xl:flex items-center gap-1.5 px-2.5 py-1 rounded-lg border font-mono text-xs cursor-pointer bg-[#191c22] text-slate-300 border-slate-700 hover:border-[#FFB800] transition-all"
+                title="View Official NSE Trading Holidays Calendar (2026)">
+          <span class="material-symbols-outlined text-[15px] text-[#FFB800]">calendar_month</span>
+          <span class="hidden lg:inline">HOLIDAYS</span>
+        </button>
+
+        <!-- Gemini AI Co-Pilot Status Pill -->
+        <button type="button" id="headerGeminiStatusPill" onclick="window.app.openScreen('user-settings')"
+                class="hidden xl:flex items-center gap-1.5 px-2.5 py-1 rounded-lg border font-mono text-xs cursor-pointer bg-[#191c22] text-slate-300 border-slate-700 hover:border-[#00FF88] transition-all"
+                title="Configure Google Gemini API Key for Live Intraday Advice">
+          <span class="material-symbols-outlined text-[15px] text-[#00FF88]">smart_toy</span>
+          <span>AI CO-PILOT</span>
+        </button>
+
+        <!-- Sound Toggle -->
+        <button type="button" id="soundToggleBtn" onclick="window.app.toggleMute()"
+                class="w-8 h-8 rounded-lg bg-[#191c22] border border-slate-700 text-slate-300 hover:text-slate-100 flex items-center justify-center transition-colors" title="Toggle Arcade Sound (M)">
+          <span class="material-symbols-outlined text-[18px]">volume_up</span>
+        </button>
+
+        <!-- Sandbox Positions Button -->
+        <button type="button" onclick="window.app.openPositionsModal()"
+                class="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#191c22] border border-[#00F0FF]/40 text-slate-200 hover:border-[#00F0FF] transition-colors">
+          <span class="font-mono text-xs font-semibold">Sandbox Desk</span>
+          <span id="headerPositionCount" class="px-1.5 py-0.2 rounded bg-[#00F0FF] text-[#090B10] font-mono text-xs font-bold">0</span>
+        </button>
+          <span id="headerPositionCount" class="px-1.5 py-0.2 rounded bg-[#00F0FF] text-[#090B10] font-mono text-xs font-bold">0</span>
+        </button>
+
+        <!-- User Settings Avatar / Shortcut -->
+        <div onclick="window.app.openScreen('user-settings')"
+             class="w-8 h-8 rounded-full bg-gradient-to-tr from-[#00FF88] to-[#00F0FF] flex items-center justify-center shrink-0 text-[#090B10] font-mono font-bold text-xs cursor-pointer hover:scale-105 transition-transform"
+             title="Open User Settings & Broker API Keys">
+          <span>GQ</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Telemetry Ribbon -->
+    <div class="h-6 w-full px-4 md:px-6 bg-[#111622]/90 border-t border-[#1E293B] flex items-center justify-between text-[11px] font-mono">
+      <div class="flex items-center gap-3">
+        <div class="flex items-center gap-1 text-[#00FF88]">
+          <span class="w-1.5 h-1.5 rounded-full bg-[#00FF88] pulse-live"></span>
+          <span class="font-bold uppercase tracking-wider">NSE L1 FEED ACTIVE</span>
+        </div>
+        <span class="text-slate-600">•</span>
+        <span class="text-[#00F0FF]">12ms LATENCY</span>
+        <span class="text-slate-600">•</span>
+        <span class="text-slate-400">MARKET STATUS: <span id="headerMarketStatusText" class="text-[#00FF88] font-bold cursor-pointer hover:underline" onclick="window.app.openNSEHolidaysModal()" title="Click to view NSE holiday schedule">OPEN</span></span>
+      </div>
+      <div class="hidden md:flex items-center gap-3 text-slate-400">
+        <span>SEGMENT: <span class="text-slate-200 font-semibold">NSE:EQ / NFO</span></span>
+        <span class="text-slate-600">•</span>
+        <span>EXCHANGE SYNC: <span class="text-[#00FF88] font-medium">OK</span></span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==========================================
+       FIXED LEFT NAVIGATION RAIL (SIDEBAR)
+       ========================================== -->
+  <aside class="fixed left-0 top-20 bottom-0 w-60 bg-[#090B10] border-r border-[#1E293B] z-40 flex flex-col justify-between py-3">
+    <div class="flex flex-col gap-2">
+      <div class="px-4 py-1">
+        <span class="font-mono text-[10px] text-slate-500 tracking-wider uppercase font-bold">Discovery Cockpit</span>
+      </div>
+
+      <!-- Quick Search Trigger in Sidebar -->
+      <div class="px-2 pb-1">
+        <button type="button" onclick="document.getElementById('globalStockSearchInput').focus(); window.app && window.app.handleStockSearchFocus();"
+                class="w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg bg-[#111622] border border-[#1E293B] hover:border-[#00FF88]/40 hover:bg-[#191c22] text-slate-400 hover:text-slate-200 text-xs font-mono transition-all group">
+          <span class="flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-[16px] text-[#00FF88] group-hover:scale-110 transition-transform">search</span>
+            <span>Search Stock...</span>
+          </span>
+          <kbd class="px-1 py-0.2 rounded bg-[#191c22] border border-slate-700 text-[9px] text-slate-500 font-bold">/</kbd>
+        </button>
+      </div>
+      
+      <!-- Nav items -->
+      <nav class="flex flex-col gap-1 px-2 font-mono text-xs">
+        <a href="javascript:void(0)" onclick="window.app.openScreen('live-scanner')" data-path="live-scanner"
+           class="flex items-center gap-2 px-3 py-2 bg-[#00FF88] text-[#002b11] font-bold rounded-lg shadow-md transition-all">
+          <span class="material-symbols-outlined text-[18px]">radar</span>
+          <span>Command Center</span>
+        </a>
+
+        <a href="javascript:void(0)" onclick="window.app.openScreen('screener-heatmap')" data-path="screener-heatmap"
+           class="flex items-center gap-2 px-3 py-2 rounded-lg text-slate-400 hover:bg-[#191c22] hover:text-slate-100 transition-all">
+          <span class="material-symbols-outlined text-[18px]">bubble_chart</span>
+          <span>Screener & Heatmap</span>
+        </a>
+
+        <a href="javascript:void(0)" onclick="window.app.openScreen('news-desk')" data-path="news-desk"
+           class="flex items-center justify-between px-3 py-2 rounded-lg text-slate-400 hover:bg-[#191c22] hover:text-slate-100 transition-all">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-[18px]">newspaper</span>
+            <span>News &amp; Catalysts</span>
+          </div>
+          <span class="px-1.5 py-0.2 rounded bg-[#00FF88]/20 text-[#00FF88] text-[9px] font-bold">LIVE</span>
+        </a>
+
+        <a href="javascript:void(0)" onclick="window.app.openScreen('deep-dive')" data-path="deep-dive"
+           class="flex items-center gap-2 px-3 py-2 rounded-lg text-slate-400 hover:bg-[#191c22] hover:text-slate-100 transition-all">
+          <span class="material-symbols-outlined text-[18px]">bolt</span>
+          <span>Deep-Dive & Charts</span>
+        </a>
+
+        <a href="javascript:void(0)" onclick="window.app.openScreen('watchlist-alerts')" data-path="watchlist-alerts"
+           class="flex items-center gap-2 px-3 py-2 rounded-lg text-slate-400 hover:bg-[#191c22] hover:text-slate-100 transition-all">
+          <span class="material-symbols-outlined text-[18px]">notifications_active</span>
+          <span>Watchlist & Alerts</span>
+        </a>
+
+        <a href="javascript:void(0)" onclick="window.app.openScreen('journal-analytics')" data-path="journal-analytics"
+           class="flex items-center gap-2 px-3 py-2 rounded-lg text-slate-400 hover:bg-[#191c22] hover:text-slate-100 transition-all">
+          <span class="material-symbols-outlined text-[18px]">assignment</span>
+          <span>Journal &amp; Analytics</span>
+        </a>
+
+        <a href="javascript:void(0)" onclick="window.app.openScreen('backtester-lab')" data-path="backtester-lab"
+           class="flex items-center justify-between px-3 py-2 rounded-lg text-slate-400 hover:bg-[#191c22] hover:text-slate-100 transition-all">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-[18px]">biotech</span>
+            <span>Backtesting Lab</span>
+          </div>
+          <span class="px-1.5 py-0.2 rounded bg-[#00F0FF]/20 text-[#00F0FF] text-[9px] font-bold">180D</span>
+        </a>
+
+        <a href="javascript:void(0)" onclick="window.app.openPositionsModal()" data-path="sandbox-positions"
+           class="flex items-center justify-between px-3 py-2 rounded-lg text-slate-400 hover:bg-[#191c22] hover:text-slate-100 transition-all">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-[18px]">account_balance_wallet</span>
+            <span>Sandbox Desk</span>
+          </div>
+          <span class="px-1.5 py-0.2 rounded bg-[#00F0FF] text-[#090B10] text-[10px] font-bold">2</span>
+        </a>
+
+        <a href="javascript:void(0)" onclick="window.app.openScreen('user-settings')" data-path="user-settings"
+           class="flex items-center gap-2 px-3 py-2 rounded-lg text-slate-400 hover:bg-[#191c22] hover:text-slate-100 transition-all">
+          <span class="material-symbols-outlined text-[18px]">settings</span>
+          <span>Settings &amp; Broker Keys</span>
+        </a>
+      </nav>
+    </div>
+
+    <!-- Bottom Rail Controls -->
+    <div class="px-3 flex flex-col gap-2 border-t border-[#1E293B] pt-3">
+      <nav class="flex flex-col gap-1 font-mono text-xs">
+        <button type="button" onclick="window.app.openNSEHolidaysModal()" class="flex items-center gap-2 px-3 py-2 rounded-lg text-slate-400 hover:bg-[#191c22] hover:text-slate-100 transition-all text-left w-full">
+          <span class="material-symbols-outlined text-[18px]">calendar_month</span>
+          <span>NSE Holidays &amp; Rules</span>
+        </button>
+
+        <button type="button" onclick="window.app.openScreen('user-settings')" class="flex items-center gap-2 px-3 py-2 rounded-lg text-slate-400 hover:bg-[#191c22] hover:text-slate-100 transition-all text-left w-full">
+          <span class="material-symbols-outlined text-[18px]">key</span>
+          <span>Groww &amp; Gemini Keys</span>
+        </button>
+
+        <button type="button" onclick="window.app.toggleDrawer()" class="flex items-center gap-2 px-3 py-2 rounded-lg text-slate-400 hover:bg-[#191c22] hover:text-slate-100 transition-all text-left w-full">
+          <span class="material-symbols-outlined text-[18px]">tune</span>
+          <span>Execution Drawer <kbd class="text-[9px] text-[#00F0FF]">[Space]</kbd></span>
+        </button>
+
+        <button type="button" onclick="window.marketStream.simulateBreakingCatalyst()" class="flex items-center gap-2 px-3 py-2 rounded-lg text-[#FFB800] hover:bg-[#191c22] transition-all text-left w-full">
+          <span class="material-symbols-outlined text-[18px]">bolt</span>
+          <span>Simulate Catalyst <kbd class="text-[9px]">[B]</kbd></span>
+        </button>
+      </nav>
+
+      <div class="px-3 py-2 rounded-lg bg-[#111622] border border-[#1E293B] flex items-center justify-between text-[11px] font-mono text-slate-400">
+        <span>RMS Risk Rule:</span>
+        <span class="text-[#00FF88] font-bold">MAX ₹5k/D</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ==========================================
+       MAIN CONTENT CONTAINER
+       ========================================== -->
+  <div class="pl-60">
+    <main class="relative pt-20 w-full min-h-screen bg-[#090B10] text-slate-100 pb-16">
+      <div id="mainContentArea" class="w-full">
+        <!-- Rendered dynamically by PulseTradeApp -->
+      </div>
+    </main>
+  </div>
+
+  <!-- ==========================================
+       SLIDE-OVER EXECUTION CO-PILOT DRAWER
+       ========================================== -->
+  <div id="executionDrawer"
+       class="fixed top-20 right-0 bottom-0 w-full sm:w-[440px] z-50 transform translate-x-full transition-transform duration-300 ease-in-out shadow-2xl">
+    <div id="drawerInnerContent" class="w-full h-full">
+      <!-- Injected dynamically by UIComponents.renderDrawer -->
+    </div>
+  </div>
+
+  <!-- Application Scripts -->
+  <script src="js/mockData.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/settings.js"></script>
+  <script src="js/growwClient.js"></script>
+  <script src="js/geminiAdvisor.js"></script>
+  <script src="js/nseCalendar.js"></script>
+  <script src="js/nseClient.js"></script>
+  <script src="js/indicators.js"></script>
+  <script src="js/backtester.js"></script>
+  <script src="js/newsIntelligence.js"></script>
+  <script src="js/marketStream.js"></script>
+  <script src="js/chart.js"></script>
+  <script src="js/paperTrading.js"></script>
+  <script src="js/alerts.js"></script>
+  <script src="js/components.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

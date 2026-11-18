@@ -1,0 +1,77 @@
+# GROVIQUE LIVE ⚡
+### *Where Intelligence Drives Growth.*
+
+> **An Institutional-Grade Intraday Research, Technical Discovery & Execution Terminal for Indian Markets (NSE)**  
+> Built with low-latency streaming, deterministic IST market phase state machines, official NSE India market parameters, Groww Trade API integration for live broker execution & quotes, Google Gemini AI intraday advisory co-pilot, multi-timeframe interactive candlestick charts, algorithmic position sizing, news intelligence, and Web Audio API feedback.
+
+---
+
+## 🌟 Key Capabilities & Architecture
+
+### 1. 🔍 Global Stock Omnibox & Instant Deep-Dive
+- Full-universe autocomplete search with responsive keyboard shortcut (`/`).
+- Quick-access ticker buttons for high-liquidity market leaders (**RELIANCE**, **TCS**, **HDFCBANK**, **TATAMOTORS**, **INFY**, **SBIN**, **ITC**).
+- Direct chart mounting and instant technical parameter computation on selection.
+
+### 2. 📊 Multi-Timeframe Candlestick Charting Engine
+- Interactive multi-timeframe views: **`1 min`**, **`5 min`**, **`1 day`**, **`1 month`**, **`1 year`**, **`3 year`**, **`5 year`**.
+- Overlaid Cyan VWAP line, 15m Opening Range (ORH/ORL) breakout bands, and Previous Day High (PDH) markers.
+- Level-2 Order Book with real-time market depth (5 bids / 5 asks) and spread analysis.
+
+### 3. 📈 Intraday Technical Indicator Suite
+- **VWAP & Dynamic VWAP Bands**: Measures price equilibrium and distance from volume-weighted average.
+- **EMA Alignment**: Dual-period Exponential Moving Averages (`9 EMA` and `20 EMA`) with bullish/bearish momentum stacking.
+- **RSI (14-Period)**: Relative Strength Index for real-time overbought/oversold momentum detection.
+- **MACD (12, 26, 9)**: Moving Average Convergence Divergence line, signal line, and expanding/contracting histogram.
+- **ATR Volatility & Invalidation SL**: Average True Range historical volatility with suggested stop-loss points.
+- **Pivot Levels & Camarilla**: Standard Floor Pivots (P, R1, R2, S1, S2) and Camarilla Breakout/Reversal Bands (H4, H3, L3, L4).
+
+### 4. 🇮🇳 100% Authentic NSE India Equities & Calendar
+- Calibrated to official **NSE India** closing figures, corporate actions, stock splits, and demergers.
+- Real-world exchange verification card with direct links to official NSE quotes (`https://www.nseindia.com/get-quotes/equity?symbol=...`).
+- Automated holiday and weekend detection: markets are closed on Saturdays, Sundays, and public holidays with Friday closing state preserved.
+
+### 5. 🤖 Google Gemini Intraday AI Co-Pilot
+- Institutional intraday trade recommendations: Entry, Technical Invalidation Stop-Loss, and Target 1 (1:2 R:R) / Target 2 (1:3 R:R).
+- **1-Click Auto-Fill**: Apply AI levels directly to the execution trade ticket.
+- Connect your own Gemini API key (`gemini-1.5-flash`, `gemini-2.0-flash`, `gemini-1.5-pro`) in User Settings or utilize the built-in algorithmic engine.
+
+### 6. 🏦 Groww Trade API Gateway
+- Dual Execution Environments:
+  - `○ SANDBOX (Paper Desk)`: Real-time paper trading with simulated fills, live P&L tracking, and trading journal.
+  - `● GROWW LIVE (Real Brokerage)`: Direct routing to your Groww Demat account for real intraday MIS execution.
+- Strict RMS risk parameters: Maximum Intraday Daily Loss limit, Auto-Square Off alert (15:15 IST), and margin validation.
+
+### 7. 📰 News Intelligence & Market Catalyst Wire
+- Real-time global, national, and company-specific news monitoring.
+- AI-driven impact analysis: predicts potential price reaction, trade entry viability, and suggested win strategies.
+
+---
+
+## ⌨️ Global Keyboard Shortcuts
+
+| Shortcut | Action |
+|:---|:---|
+| `/` | Focus Global Stock Search Omnibox |
+| `Space` | Toggle Slide-Over Co-Pilot Execution Drawer |
+| `1` | Switch to Command Center |
+| `2` | Switch to Screener & Heatmap |
+| `3` | Switch to Deep-Dive & Charts |
+| `4` | Switch to Watchlist & Alerts |
+| `5` | Switch to Journal & Telemetry |
+| `B` | Simulate Breaking Catalyst Event |
+| `M` | Toggle Audio Synthesizer (Mute / Unmute) |
+| `Esc` | Close Drawer or Modal |
+
+---
+
+## 💻 Quick Start
+
+### Prerequisites
+- Node.js (v18+)
+
+### Run Locally
+```bash
+node server.js
+```
+Then open **`http://127.0.0.1:3000/`** in your browser.

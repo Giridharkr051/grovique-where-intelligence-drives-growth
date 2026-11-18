@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none">
+  <defs>
+    <linearGradient id="groviqueGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00F0FF"/>
+      <stop offset="50%" stop-color="#00FF88"/>
+      <stop offset="100%" stop-color="#75FF9E"/>
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="1.5" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+  
+  <!-- Outer rounded container -->
+  <rect x="2" y="2" width="44" height="44" rx="12" fill="#0E131F" stroke="url(#groviqueGrad)" stroke-width="1.5" stroke-opacity="0.5"/>
+  
+  <!-- Stylized Geometric G Loop (Intelligence Arc) -->
+  <path d="M 32 14 C 27 9.5 18 9 13 14.5 C 7.5 20.5 7.5 30 13 35.5 C 18.5 41 29 41 34 35 C 37 31 38 26.5 38 23.5 L 24 23.5" 
+        stroke="url(#groviqueGrad)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)"/>
+        
+  <!-- Growth Trajectory Vector (Exponential Upward Impulse) -->
+  <path d="M 24 23.5 L 37 10.5" stroke="#00FF88" stroke-width="3.5" stroke-linecap="round"/>
+  <path d="M 29.5 10.5 L 37 10.5 L 37 18" stroke="#00FF88" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  
+  <!-- Intelligent Nexus Core (Neural Point) -->
+  <circle cx="24" cy="23.5" r="3.2" fill="#00F0FF" filter="url(#glow)"/>
+  <circle cx="24" cy="23.5" r="1.4" fill="#090B10"/>
+</svg>

@@ -1,0 +1,181 @@
+/* PulseTrade Live - Arcade Terminal Theme & Accents */
+
+/* Custom Fonts & Base Reset */
+:root {
+  --color-bg-obsidian: #090B10;
+  --color-card-slate: #111622;
+  --color-card-border: #1E293B;
+  --color-neon-cyan: #00F0FF;
+  --color-neon-green: #00FF88;
+  --color-neon-magenta: #FF2A6D;
+  --color-arcade-amber: #FFB800;
+  --color-surface-high: #272a31;
+}
+
+body {
+  background-color: var(--color-bg-obsidian);
+  color: #e1e2eb;
+  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  overflow-x: hidden;
+}
+
+/* Tabular Numerals for Finance Metrics */
+.font-mono, .metric-val, [data-metric] {
+  font-family: 'JetBrains Mono', monospace;
+  font-feature-settings: "tnum" 1, "zero" 1;
+}
+
+/* Subtle Arcade Scanline Overlay */
+.arcade-scanlines {
+  position: relative;
+}
+.arcade-scanlines::before {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 0; left: 0; bottom: 0; right: 0;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+  z-index: 2;
+  background-size: 100% 3px, 6px 100%;
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+/* Arcade Neon Glows */
+.glow-cyan {
+  box-shadow: 0 0 15px rgba(0, 240, 255, 0.35), inset 0 0 10px rgba(0, 240, 255, 0.15);
+}
+.glow-green {
+  box-shadow: 0 0 15px rgba(0, 255, 136, 0.35), inset 0 0 10px rgba(0, 255, 136, 0.15);
+}
+.glow-magenta {
+  box-shadow: 0 0 15px rgba(255, 42, 109, 0.35), inset 0 0 10px rgba(255, 42, 109, 0.15);
+}
+.glow-amber {
+  box-shadow: 0 0 15px rgba(255, 184, 0, 0.35), inset 0 0 10px rgba(255, 184, 0, 0.15);
+}
+
+.text-glow-cyan {
+  text-shadow: 0 0 8px rgba(0, 240, 255, 0.7);
+}
+.text-glow-green {
+  text-shadow: 0 0 8px rgba(0, 255, 136, 0.7);
+}
+.text-glow-magenta {
+  text-shadow: 0 0 8px rgba(255, 42, 109, 0.7);
+}
+
+/* Arcade Tactile Buttons */
+.arcade-btn {
+  position: relative;
+  transition: all 0.1s ease-in-out;
+  border-bottom-width: 3px;
+}
+.arcade-btn:active {
+  transform: translateY(2px);
+  border-bottom-width: 1px;
+}
+
+.arcade-btn-green {
+  background: linear-gradient(180deg, #00FF88 0%, #00b35e 100%);
+  color: #002b11;
+  border-color: #007a40;
+}
+.arcade-btn-green:hover {
+  background: linear-gradient(180deg, #33ff9f 0%, #00cc6c 100%);
+  box-shadow: 0 0 16px rgba(0, 255, 136, 0.5);
+}
+
+.arcade-btn-magenta {
+  background: linear-gradient(180deg, #FF2A6D 0%, #ba0d43 100%);
+  color: #ffffff;
+  border-color: #800028;
+}
+.arcade-btn-magenta:hover {
+  background: linear-gradient(180deg, #ff4d84 0%, #db004d 100%);
+  box-shadow: 0 0 16px rgba(255, 42, 109, 0.5);
+}
+
+.arcade-btn-cyan {
+  background: linear-gradient(180deg, #00F0FF 0%, #0099a8 100%);
+  color: #002226;
+  border-color: #006b75;
+}
+.arcade-btn-cyan:hover {
+  background: linear-gradient(180deg, #33f3ff 0%, #00b8c9 100%);
+  box-shadow: 0 0 16px rgba(0, 240, 255, 0.5);
+}
+
+/* Tick flash animations */
+@keyframes flashGreen {
+  0% { background-color: rgba(0, 255, 136, 0.4); }
+  100% { background-color: transparent; }
+}
+@keyframes flashRed {
+  0% { background-color: rgba(255, 42, 109, 0.4); }
+  100% { background-color: transparent; }
+}
+.tick-up {
+  animation: flashGreen 0.6s ease-out;
+}
+.tick-down {
+  animation: flashRed 0.6s ease-out;
+}
+
+/* Segmented LED Bar Styles */
+.led-segment {
+  width: 8px;
+  height: 14px;
+  margin-right: 2px;
+  border-radius: 1px;
+  background-color: #1a2233;
+}
+.led-segment.active-green {
+  background-color: #00FF88;
+  box-shadow: 0 0 6px rgba(0, 255, 136, 0.8);
+}
+.led-segment.active-cyan {
+  background-color: #00F0FF;
+  box-shadow: 0 0 6px rgba(0, 240, 255, 0.8);
+}
+.led-segment.active-amber {
+  background-color: #FFB800;
+  box-shadow: 0 0 6px rgba(255, 184, 0, 0.8);
+}
+.led-segment.active-magenta {
+  background-color: #FF2A6D;
+  box-shadow: 0 0 6px rgba(255, 42, 109, 0.8);
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #090B10;
+}
+::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #00F0FF;
+}
+
+/* Pulse indicator */
+@keyframes pulseGlow {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.92); }
+}
+.pulse-live {
+  animation: pulseGlow 1.5s infinite;
+}
+
+/* Subtle CRT grid pattern */
+.grid-pattern {
+  background-size: 24px 24px;
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+}

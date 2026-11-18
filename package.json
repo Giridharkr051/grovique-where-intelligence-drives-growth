@@ -1,0 +1,24 @@
+{
+  "name": "grovique-live",
+  "version": "1.0.0",
+  "description": "GROVIQUE LIVE - Where Intelligence Drives Growth. Institutional-grade intraday trading research & execution platform for Indian markets (NSE).",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [
+    "trading",
+    "grovique",
+    "nse",
+    "intraday",
+    "co-pilot",
+    "candlestick-charts",
+    "vwap",
+    "orb",
+    "groww-api",
+    "gemini-ai",
+    "paper-trading"
+  ],
+  "author": "PulseTrade Engineering",
+  "license": "MIT"
+}
