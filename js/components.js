@@ -223,7 +223,11 @@ class UIComponents {
                 ${breadth.regime}
               </span>
             </div>
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-2 flex-wrap">
+              <button onclick="window.app.openScreen('investment-calculators')" class="px-2.5 py-1 rounded bg-[#FFB800]/20 border border-[#FFB800]/60 text-[#FFB800] hover:bg-[#FFB800]/30 text-xs font-mono font-bold flex items-center gap-1.5 transition-all shadow-sm">
+                <span class="material-symbols-outlined text-[15px]">calculate</span>
+                <span>Investment Calculators</span>
+              </button>
               <button onclick="window.app.openScreen('backtester-lab')" class="px-2.5 py-1 rounded bg-[#00F0FF]/15 border border-[#00F0FF]/40 text-[#00F0FF] hover:bg-[#00F0FF]/25 text-xs font-mono font-bold flex items-center gap-1.5 transition-all">
                 <span class="material-symbols-outlined text-[14px]">query_stats</span>
                 <span>Strategy Backtest Lab</span>

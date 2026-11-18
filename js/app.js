@@ -121,6 +121,8 @@ class GroviqueApp {
         this.openScreen('backtester-lab');
       } else if (e.code === 'KeyM') {
         this.toggleMute();
+      } else if (e.code === 'KeyC') {
+        this.openScreen('investment-calculators');
       } else if (e.code === 'KeyB') {
         window.marketStream.simulateBreakingCatalyst();
       } else if (e.code === 'Escape') {
