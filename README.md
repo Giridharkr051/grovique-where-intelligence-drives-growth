@@ -36,13 +36,20 @@
 - **1-Click Auto-Fill**: Apply AI levels directly to the execution trade ticket.
 - Connect your own Gemini API key (`gemini-1.5-flash`, `gemini-2.0-flash`, `gemini-1.5-pro`) in User Settings or utilize the built-in algorithmic engine.
 
-### 6. 🏦 Groww Trade API Gateway
+### 6. 🏦 Groww Trade API Gateway & Python SDK Integration
 - Dual Execution Environments:
   - `○ SANDBOX (Paper Desk)`: Real-time paper trading with simulated fills, live P&L tracking, and trading journal.
-  - `● GROWW LIVE (Real Brokerage)`: Direct routing to your Groww Demat account for real intraday MIS execution.
+  - `● GROWW LIVE (Real Brokerage)`: Direct routing to your Groww Demat account for real intraday MIS execution with up to 5x margin.
 - Strict RMS risk parameters: Maximum Intraday Daily Loss limit, Auto-Square Off alert (15:15 IST), and margin validation.
+- **Official Python SDK Reference**: Comprehensive guide in [`docs/groww_python_sdk_guide.md`](docs/groww_python_sdk_guide.md).
+- **Algorithmic Trading Bot**: 15m ORB + VWAP automated strategy runner in [`scripts/groww_intraday_bot.py`](scripts/groww_intraday_bot.py).
 
-### 7. 📰 News Intelligence & Market Catalyst Wire
+### 7. 🧠 Gemini Vector RAG Engine & Model Context Protocol (MCP)
+- **Vector RAG Engine**: High-dimensional semantic embeddings via `text-embedding-004` with cosine similarity retrieval across NSE technical knowledge bases.
+- **MCP Server & Client**: Standardized tools (`get_quote`, `get_technical_indicators`, `get_user_margin`, `place_order`) compliant with Model Context Protocol.
+- **RAG & MCP Studio UI**: Interactive diagnostics suite in the terminal to inspect retrieved chunk context, similarity scores, and tool invocations in real time.
+
+### 8. 📰 News Intelligence & Market Catalyst Wire
 - Real-time global, national, and company-specific news monitoring.
 - AI-driven impact analysis: predicts potential price reaction, trade entry viability, and suggested win strategies.
 
