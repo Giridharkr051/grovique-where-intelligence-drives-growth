@@ -243,6 +243,23 @@ class GroviqueMCPServer {
           },
           required: ["symbol", "transactionType", "quantity", "price"]
         }
+      },
+      {
+        name: "calculate_investment_returns",
+        description: "Calculate multi-asset investment returns, compound interest, SIP wealth, FD maturity, or stock CAGR with Budget 2024 taxes and inflation adjustments.",
+        inputSchema: {
+          type: "object",
+          properties: {
+            assetType: { type: "string", enum: ["SIP", "LUMPSUM", "STOCK", "FD", "BOND", "INFLATION"], description: "Type of asset or calculation model" },
+            amount: { type: "number", description: "Principal or monthly investment amount in INR" },
+            rate: { type: "number", description: "Expected annual return or interest rate in percent" },
+            tenureYears: { type: "number", description: "Investment duration in years" },
+            stepUpPercent: { type: "number", description: "Optional annual SIP step-up percentage" },
+            inflationRate: { type: "number", description: "Optional inflation rate (default: 5.5%)" },
+            isSeniorCitizen: { type: "boolean", description: "Whether FD investor is senior citizen (+0.5% rate)" }
+          },
+          required: ["assetType", "amount", "rate", "tenureYears"]
+        }
       }
     ];
   }
@@ -452,6 +469,74 @@ class GroviqueMCPServer {
 
         return {
           content: [{ type: "text", text: JSON.stringify(execution, null, 2) }]
+        };
+      }
+
+      case "calculate_investment_returns": {
+        const { assetType, amount, rate, tenureYears, stepUpPercent = 0, inflationRate = 5.5, isSeniorCitizen = false } = args;
+        let result = {};
+
+        if (assetType === "SIP") {
+          const r = (rate / 100) / 12;
+          const months = tenureYears * 12;
+          let invested = 0;
+          let corpus = 0;
+          let currentMonthly = amount;
+
+          for (let m = 1; m <= months; m++) {
+            invested += currentMonthly;
+            corpus = (corpus + currentMonthly) * (1 + r);
+            if (m % 12 === 0 && stepUpPercent > 0) {
+              currentMonthly *= (1 + stepUpPercent / 100);
+            }
+          }
+          const gains = corpus - invested;
+          const inflationFactor = Math.pow(1 + inflationRate / 100, tenureYears);
+          const realValue = corpus / inflationFactor;
+          const taxableGains = Math.max(0, gains - 125000);
+          const tax = taxableGains * 0.125; // 12.5% LTCG
+
+          result = {
+            assetType: "MUTUAL_FUNDS_SIP",
+            totalInvested: Math.round(invested),
+            nominalCorpus: Math.round(corpus),
+            grossGains: Math.round(gains),
+            estimatedLTCGTax: Math.round(tax),
+            postTaxCorpus: Math.round(corpus - tax),
+            inflationAdjustedRealPower: Math.round(realValue),
+            purchasingPowerErosion: Math.round(corpus - realValue)
+          };
+        } else if (assetType === "FD") {
+          const effectiveRate = isSeniorCitizen ? rate + 0.5 : rate;
+          const maturity = amount * Math.pow(1 + (effectiveRate / 100) / 4, 4 * tenureYears);
+          const interest = maturity - amount;
+          const tax = interest * 0.20; // 20% slab
+          const realVal = (maturity - tax) / Math.pow(1 + inflationRate / 100, tenureYears);
+
+          result = {
+            assetType: "BANK_FIXED_DEPOSIT",
+            principal: Math.round(amount),
+            effectiveInterestRate: effectiveRate,
+            grossMaturity: Math.round(maturity),
+            totalInterest: Math.round(interest),
+            slabTax20Pct: Math.round(tax),
+            postTaxMaturity: Math.round(maturity - tax),
+            inflationAdjustedWorth: Math.round(realVal)
+          };
+        } else {
+          const nominal = amount * Math.pow(1 + rate / 100, tenureYears);
+          const realVal = nominal / Math.pow(1 + inflationRate / 100, tenureYears);
+          result = {
+            assetType: assetType || "EQUITY_LUMPSUM",
+            invested: Math.round(amount),
+            nominalCorpus: Math.round(nominal),
+            gain: Math.round(nominal - amount),
+            inflationAdjustedWorth: Math.round(realVal)
+          };
+        }
+
+        return {
+          content: [{ type: "text", text: JSON.stringify(result, null, 2) }]
         };
       }
 

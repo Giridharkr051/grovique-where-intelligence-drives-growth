@@ -217,6 +217,9 @@ class GroviqueApp {
       case 'multi-agents':
         mainContainer.innerHTML = UIComponents.renderAgentSwarmStudio(stream);
         break;
+      case 'investment-calculators':
+        mainContainer.innerHTML = UIComponents.renderCalculatorsStudio(stream);
+        break;
       case 'sandbox-positions':
         mainContainer.innerHTML = UIComponents.renderJournalAnalytics(stream);
         this.openPositionsModal();
@@ -737,6 +740,226 @@ class GroviqueApp {
       }
       this.renderActiveScreen();
     }
+  }
+
+  // ==========================================
+  // INVESTMENT CALCULATORS METHODS
+  // ==========================================
+  switchCalculatorTab(tabId) {
+    window.activeCalculatorTab = tabId;
+    if (window.arcadeAudio) window.arcadeAudio.playBlip();
+    this.renderActiveScreen();
+  }
+
+  loadCalculatorPreset(presetId) {
+    if (presetId === 'wealth-builder') {
+      window.activeCalculatorTab = 'sip-stepup';
+      this.renderActiveScreen();
+      setTimeout(() => {
+        const amt = document.getElementById('sipAmountSlider');
+        const ret = document.getElementById('sipReturnSlider');
+        const yrs = document.getElementById('sipYearsSlider');
+        const step = document.getElementById('sipStepUpSlider');
+        if (amt) amt.value = 15000;
+        if (ret) ret.value = 13;
+        if (yrs) yrs.value = 15;
+        if (step) step.value = 10;
+        this.updateSipCalculation();
+      }, 50);
+    } else if (presetId === 'fd-safety') {
+      window.activeCalculatorTab = 'fd-rd';
+      this.renderActiveScreen();
+      setTimeout(() => {
+        const p = document.getElementById('fdPrincipal');
+        const r = document.getElementById('fdInterestRate');
+        const t = document.getElementById('fdTenure');
+        if (p) p.value = 500000;
+        if (r) r.value = 7.5;
+        if (t) t.value = 3;
+        this.updateFdCalculation();
+      }, 50);
+    } else if (presetId === 'equity-alpha') {
+      window.activeCalculatorTab = 'stocks-equity';
+      this.renderActiveScreen();
+      setTimeout(() => {
+        const b = document.getElementById('stockBuyPrice');
+        const tg = document.getElementById('stockTargetPrice');
+        const q = document.getElementById('stockQuantity');
+        if (b) b.value = 1250;
+        if (tg) tg.value = 2450;
+        if (q) q.value = 250;
+        this.updateStockCalculation();
+      }, 50);
+    } else if (presetId === 'fire-retirement') {
+      window.activeCalculatorTab = 'inflation-fire';
+      this.renderActiveScreen();
+    }
+  }
+
+  updateSipCalculation() {
+    const amtEl = document.getElementById('sipAmountSlider');
+    const retEl = document.getElementById('sipReturnSlider');
+    const yrsEl = document.getElementById('sipYearsSlider');
+    const stepEl = document.getElementById('sipStepUpSlider');
+    const infEl = document.getElementById('sipInflationSlider');
+
+    if (!amtEl || !retEl || !yrsEl) return;
+
+    const monthlyInvestment = parseFloat(amtEl.value);
+    const expectedReturnRate = parseFloat(retEl.value);
+    const durationYears = parseInt(yrsEl.value);
+    const stepUpPercent = stepEl ? parseFloat(stepEl.value) : 0;
+    const inflationRate = infEl ? parseFloat(infEl.value) : 5.5;
+
+    const dAmt = document.getElementById('sipAmountDisplay');
+    const dRet = document.getElementById('sipReturnDisplay');
+    const dYrs = document.getElementById('sipYearsDisplay');
+    const dStep = document.getElementById('sipStepUpDisplay');
+    const dInf = document.getElementById('sipInflationDisplay');
+
+    if (dAmt) dAmt.innerText = `₹${monthlyInvestment.toLocaleString('en-IN')}`;
+    if (dRet) dRet.innerText = `${expectedReturnRate.toFixed(1)}%`;
+    if (dYrs) dYrs.innerText = `${durationYears} Years`;
+    if (dStep) dStep.innerText = `+${stepUpPercent}% Yearly`;
+    if (dInf) dInf.innerText = `${inflationRate.toFixed(1)}%`;
+
+    const res = window.investmentCalculators.calculateSIP({
+      monthlyInvestment,
+      expectedReturnRate,
+      durationYears,
+      stepUpPercent,
+      inflationRate
+    });
+
+    const totEl = document.getElementById('sipTotalInvested');
+    const nomEl = document.getElementById('sipNominalValue');
+    const realEl = document.getElementById('sipRealValue');
+    const gainPctEl = document.getElementById('sipGainPct');
+    const grossEl = document.getElementById('sipGrossGains');
+    const taxEl = document.getElementById('sipTaxAmount');
+    const infErosionEl = document.getElementById('sipInflationErosion');
+    const postTaxEl = document.getElementById('sipPostTaxCorpus');
+
+    if (totEl) totEl.innerText = `₹${res.totalInvested.toLocaleString('en-IN')}`;
+    if (nomEl) nomEl.innerText = `₹${res.nominalCorpus.toLocaleString('en-IN')}`;
+    if (realEl) realEl.innerText = `₹${res.inflationAdjustedCorpus.toLocaleString('en-IN')}`;
+    if (gainPctEl) gainPctEl.innerText = `+${res.gainPercentage}% total gain`;
+    if (grossEl) grossEl.innerText = `₹${res.estimatedGains.toLocaleString('en-IN')}`;
+    if (taxEl) taxEl.innerText = `- ₹${res.estimatedLTCGTax.toLocaleString('en-IN')}`;
+    if (infErosionEl) infErosionEl.innerText = `- ₹${res.inflationErosion.toLocaleString('en-IN')}`;
+    if (postTaxEl) postTaxEl.innerText = `₹${res.postTaxCorpus.toLocaleString('en-IN')}`;
+  }
+
+  updateStockCalculation() {
+    const b = document.getElementById('stockBuyPrice');
+    const tg = document.getElementById('stockTargetPrice');
+    const q = document.getElementById('stockQuantity');
+    const h = document.getElementById('stockHoldingDays');
+    const d = document.getElementById('stockDividendYield');
+
+    if (!b || !tg || !q) return;
+
+    const res = window.investmentCalculators.calculateStockReturns({
+      buyPrice: parseFloat(b.value) || 0,
+      targetOrCurrentPrice: parseFloat(tg.value) || 0,
+      quantity: parseInt(q.value) || 0,
+      holdingPeriodDays: parseInt(h?.value || 365),
+      annualDividendYield: parseFloat(d?.value || 0)
+    });
+
+    const invEl = document.getElementById('stockTotalInvested');
+    const cagrEl = document.getElementById('stockCagr');
+    const netEl = document.getElementById('stockNetProfit');
+    const capEl = document.getElementById('stockCapGain');
+    const divEl = document.getElementById('stockDivReceived');
+    const taxCatEl = document.getElementById('stockTaxCategory');
+
+    if (invEl) invEl.innerText = `₹${res.totalInvestment.toLocaleString('en-IN')}`;
+    if (cagrEl) cagrEl.innerText = `${res.cagrPct}%`;
+    if (netEl) netEl.innerText = `₹${res.netProfitPostTax.toLocaleString('en-IN')}`;
+    if (capEl) capEl.innerText = `₹${res.capitalGain.toLocaleString('en-IN')}`;
+    if (divEl) divEl.innerText = `₹${res.totalDividends.toLocaleString('en-IN')}`;
+    if (taxCatEl) taxCatEl.innerText = `${res.isLTCG ? 'LTCG (12.5% > ₹1.25L)' : 'STCG (20%)'} (-₹${res.estimatedTax.toLocaleString('en-IN')})`;
+  }
+
+  updateFdCalculation() {
+    const p = document.getElementById('fdPrincipal');
+    const r = document.getElementById('fdInterestRate');
+    const t = document.getElementById('fdTenure');
+    const tax = document.getElementById('fdTaxSlab');
+    const sc = document.getElementById('fdSeniorCitizen');
+
+    if (!p || !r || !t) return;
+
+    const res = window.investmentCalculators.calculateFD({
+      principal: parseFloat(p.value) || 0,
+      interestRate: parseFloat(r.value) || 0,
+      tenureYears: parseFloat(t.value) || 1,
+      taxBracketPct: parseFloat(tax?.value || 20),
+      isSeniorCitizen: !!sc?.checked
+    });
+
+    const gm = document.getElementById('fdGrossMaturity');
+    const ptm = document.getElementById('fdPostTaxMaturity');
+    const rp = document.getElementById('fdRealPower');
+    const ie = document.getElementById('fdInterestEarned');
+    const td = document.getElementById('fdTaxDeducted');
+    const rr = document.getElementById('fdRealRate');
+
+    if (gm) gm.innerText = `₹${res.maturityAmount.toLocaleString('en-IN')}`;
+    if (ptm) ptm.innerText = `₹${res.postTaxMaturity.toLocaleString('en-IN')}`;
+    if (rp) rp.innerText = `₹${res.realPurchasingPower.toLocaleString('en-IN')}`;
+    if (ie) ie.innerText = `₹${res.totalInterestEarned.toLocaleString('en-IN')}`;
+    if (td) td.innerText = `- ₹${res.totalTax.toLocaleString('en-IN')}`;
+    if (rr) rr.innerText = `${res.realReturnRate}% p.a.`;
+  }
+
+  updateBondCalculation() {
+    const fv = document.getElementById('bondFaceValue');
+    const mp = document.getElementById('bondMarketPrice');
+    const cr = document.getElementById('bondCouponRate');
+    const t = document.getElementById('bondTenure');
+    const sgb = document.getElementById('bondIsSGB');
+
+    if (!fv || !mp) return;
+
+    const res = window.investmentCalculators.calculateBond({
+      faceValue: parseFloat(fv.value) || 1000,
+      marketPrice: parseFloat(mp.value) || 1000,
+      couponRate: parseFloat(cr?.value || 7.5),
+      tenureYears: parseFloat(t?.value || 5),
+      isSGB: !!sgb?.checked
+    });
+
+    const ytm = document.getElementById('bondYtm');
+    const tc = document.getElementById('bondTotalCashflow');
+    const pt = document.getElementById('bondPostTaxProfit');
+
+    if (ytm) ytm.innerText = `${res.ytmPct}%`;
+    if (tc) tc.innerText = `₹${(res.faceValue + res.totalCoupons).toLocaleString('en-IN')}`;
+    if (pt) pt.innerText = `₹${res.postTaxProfit.toLocaleString('en-IN')}`;
+  }
+
+  updateInflationCalculation() {
+    const exp = document.getElementById('infMonthlyExp');
+    const rate = document.getElementById('infRate');
+    const yrs = document.getElementById('infYears');
+
+    if (!exp || !rate) return;
+
+    const res = window.investmentCalculators.calculateInflationErosion({
+      currentExpensesMonthly: parseFloat(exp.value) || 50000,
+      inflationRate: parseFloat(rate.value) || 6.0,
+      yearsInFuture: parseInt(yrs?.value || 15)
+    });
+
+    const fm = document.getElementById('infFutureMonthly');
+    const rc = document.getElementById('infRequiredCorpus');
+    const iw = document.getElementById('infIdleWorth');
+
+    if (fm) fm.innerText = `₹${res.futureMonthly.toLocaleString('en-IN')}`;
+    if (rc) rc.innerText = `₹${(res.requiredCorpus / 10000000).toFixed(2)} Cr`;
+    if (iw) iw.innerText = `₹${res.idleCashFutureWorth.toLocaleString('en-IN')}`;
   }
 
   // ==========================================

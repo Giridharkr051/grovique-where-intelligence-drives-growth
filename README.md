@@ -59,7 +59,16 @@
 - **Interactive Terminal Studio**: Watch real-time message passing, thought logs, and 1-click execution routing to Groww Trade API.
 - **Python Swarm Runner**: Standalone algorithmic script in [`scripts/multi_agent_swarm.py`](scripts/multi_agent_swarm.py).
 
-### 9. 📰 News Intelligence & Market Catalyst Wire
+### 9. 🧮 Institutional Multi-Asset Investment Calculators Suite
+- **Mutual Fund SIP & Annual Step-Up**: Simulates monthly compounding with annual percentage step-ups (+10%), inflation deflation, and Budget 2024 revised 12.5% LTCG tax deductions.
+- **Stocks & Equity Alpha Returns**: Calculates holding period CAGR, capital gains, dividend payouts, and STCG (20%) vs LTCG (12.5% > ₹1.25L) post-tax profits.
+- **Bank Fixed Deposits (FD) & RD**: Quarterly compounding interest, senior citizen 0.50% rate booster, TDS / investor income tax slab deduction, and real purchasing power yield.
+- **Bonds, G-Sec & Sovereign Gold Bonds (SGB)**: Yield-to-Maturity (YTM) calculation, coupon payout cash flow, and SGB 2.5% sovereign interest with 100% tax-free capital gains at maturity.
+- **Inflation & FIRE Retirement Modeler**: Computes future cost of living multipliers, purchasing power erosion of idle cash, and required retirement corpus.
+- **Multi-Asset Face-Off Comparator**: Side-by-side risk-adjusted comparison matrix for Equities, Mutual Funds, SGBs, and FDs.
+- **Python CLI Tool**: Standalone modeling script in [`scripts/investment_calculators.py`](scripts/investment_calculators.py).
+
+### 10. 📰 News Intelligence & Market Catalyst Wire
 - Real-time global, national, and company-specific news monitoring.
 - AI-driven impact analysis: predicts potential price reaction, trade entry viability, and suggested win strategies.
 

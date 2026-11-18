@@ -3336,6 +3336,641 @@ class UIComponents {
       </div>
     `;
   }
+
+  // ========================================================
+  // INSTITUTIONAL INVESTMENT & RETURNS CALCULATORS SUITE
+  // ========================================================
+  static renderCalculatorsStudio(stream) {
+    const activeTab = window.activeCalculatorTab || 'sip-stepup';
+    const calc = window.investmentCalculators;
+
+    return `
+      <div class="flex flex-col gap-6 p-4 sm:p-6 max-w-7xl mx-auto font-mono text-slate-200">
+        
+        <!-- HEADER HERO -->
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-4 border-b border-[#1E293B] gap-4">
+          <div class="flex flex-col gap-1">
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-[#00FF88] text-[28px]">calculate</span>
+              <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-slate-100">Institutional Investment & Returns Calculators</h1>
+            </div>
+            <p class="text-xs text-slate-400">
+              Multi-Asset Financial Modeling: Inflation Adjustment • Budget 2024 LTCG/STCG Tax Calibration • Post-Tax Real Purchasing Power
+            </p>
+          </div>
+
+          <!-- Quick Presets Dropdown / Buttons -->
+          <div class="flex items-center gap-1.5 flex-wrap">
+            <button type="button" onclick="window.app.loadCalculatorPreset('wealth-builder')"
+                    class="px-2.5 py-1.5 rounded-lg bg-[#111622] hover:bg-[#191c22] border border-slate-700 hover:border-[#00FF88] text-xs text-slate-300 hover:text-[#00FF88] transition-all">
+              ⚡ ₹15k SIP (15Y)
+            </button>
+            <button type="button" onclick="window.app.loadCalculatorPreset('fd-safety')"
+                    class="px-2.5 py-1.5 rounded-lg bg-[#111622] hover:bg-[#191c22] border border-slate-700 hover:border-[#00F0FF] text-xs text-slate-300 hover:text-[#00F0FF] transition-all">
+              🏦 ₹5L FD (7.5%)
+            </button>
+            <button type="button" onclick="window.app.loadCalculatorPreset('equity-alpha')"
+                    class="px-2.5 py-1.5 rounded-lg bg-[#111622] hover:bg-[#191c22] border border-slate-700 hover:border-[#FFB800] text-xs text-slate-300 hover:text-[#FFB800] transition-all">
+              📈 Reliance 5Y Equity
+            </button>
+            <button type="button" onclick="window.app.loadCalculatorPreset('fire-retirement')"
+                    class="px-2.5 py-1.5 rounded-lg bg-[#111622] hover:bg-[#191c22] border border-slate-700 hover:border-[#FF2A6D] text-xs text-slate-300 hover:text-[#FF2A6D] transition-all">
+              🔥 FIRE Retirement
+            </button>
+          </div>
+        </div>
+
+        <!-- CALCULATOR NAVIGATION TABS -->
+        <div class="flex items-center gap-2 overflow-x-auto pb-1 border-b border-slate-800">
+          <button type="button" onclick="window.app.switchCalculatorTab('sip-stepup')"
+                  class="px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 shrink-0 ${activeTab === 'sip-stepup' ? 'bg-[#00FF88] text-[#002b11] shadow-lg' : 'bg-[#111622] text-slate-400 hover:text-white border border-slate-800'}">
+            <span class="material-symbols-outlined text-[17px]">savings</span>
+            <span>SIP & Step-Up Wealth</span>
+          </button>
+
+          <button type="button" onclick="window.app.switchCalculatorTab('stocks-equity')"
+                  class="px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 shrink-0 ${activeTab === 'stocks-equity' ? 'bg-[#00F0FF] text-[#090B10] shadow-lg' : 'bg-[#111622] text-slate-400 hover:text-white border border-slate-800'}">
+            <span class="material-symbols-outlined text-[17px]">trending_up</span>
+            <span>Stocks & Equity Returns</span>
+          </button>
+
+          <button type="button" onclick="window.app.switchCalculatorTab('fd-rd')"
+                  class="px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 shrink-0 ${activeTab === 'fd-rd' ? 'bg-[#FFB800] text-[#090B10] shadow-lg' : 'bg-[#111622] text-slate-400 hover:text-white border border-slate-800'}">
+            <span class="material-symbols-outlined text-[17px]">account_balance</span>
+            <span>Bank FD & Recurring Deposit</span>
+          </button>
+
+          <button type="button" onclick="window.app.switchCalculatorTab('bonds-sgb')"
+                  class="px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 shrink-0 ${activeTab === 'bonds-sgb' ? 'bg-[#9d4edd] text-white shadow-lg' : 'bg-[#111622] text-slate-400 hover:text-white border border-slate-800'}">
+            <span class="material-symbols-outlined text-[17px]">verified</span>
+            <span>Bonds, G-Sec & SGB</span>
+          </button>
+
+          <button type="button" onclick="window.app.switchCalculatorTab('inflation-fire')"
+                  class="px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 shrink-0 ${activeTab === 'inflation-fire' ? 'bg-[#FF2A6D] text-white shadow-lg' : 'bg-[#111622] text-slate-400 hover:text-white border border-slate-800'}">
+            <span class="material-symbols-outlined text-[17px]">local_fire_department</span>
+            <span>Inflation & FIRE Corpus</span>
+          </button>
+
+          <button type="button" onclick="window.app.switchCalculatorTab('asset-comparison')"
+                  class="px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 shrink-0 ${activeTab === 'asset-comparison' ? 'bg-gradient-to-r from-[#00FF88] to-[#00F0FF] text-[#090B10] shadow-lg' : 'bg-[#111622] text-slate-400 hover:text-white border border-slate-800'}">
+            <span class="material-symbols-outlined text-[17px]">balance</span>
+            <span>Multi-Asset Comparator</span>
+          </button>
+        </div>
+
+        <!-- TAB CONTENT CONTAINER -->
+        <div id="calculatorActiveTabContent">
+          ${UIComponents.renderCalculatorTabBody(activeTab, stream)}
+        </div>
+
+      </div>
+    `;
+  }
+
+  // Sub-renderer for individual calculator tab views
+  static renderCalculatorTabBody(tab, stream) {
+    const calc = window.investmentCalculators;
+
+    if (tab === 'stocks-equity') {
+      return UIComponents.renderStockCalculatorView(calc);
+    } else if (tab === 'fd-rd') {
+      return UIComponents.renderFdCalculatorView(calc);
+    } else if (tab === 'bonds-sgb') {
+      return UIComponents.renderBondCalculatorView(calc);
+    } else if (tab === 'inflation-fire') {
+      return UIComponents.renderInflationCalculatorView(calc);
+    } else if (tab === 'asset-comparison') {
+      return UIComponents.renderAssetComparisonView(calc);
+    } else {
+      return UIComponents.renderSipCalculatorView(calc);
+    }
+  }
+
+  // 1. SIP & Step-Up Calculator View
+  static renderSipCalculatorView(calc) {
+    const defaultData = calc.calculateSIP({
+      monthlyInvestment: 15000,
+      expectedReturnRate: 13.0,
+      durationYears: 15,
+      stepUpPercent: 10,
+      inflationRate: 5.5
+    });
+
+    return `
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        
+        <!-- Controls Column (5 cols) -->
+        <div class="lg:col-span-5 p-5 rounded-2xl bg-[#111622] border border-[#1E293B] shadow-xl flex flex-col gap-4">
+          <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+            <span class="font-bold text-sm text-slate-100 flex items-center gap-2">
+              <span class="material-symbols-outlined text-[#00FF88] text-[20px]">tune</span>
+              <span>SIP Parameters</span>
+            </span>
+            <span class="text-[10px] text-slate-400">Compounding: Monthly</span>
+          </div>
+
+          <!-- Monthly SIP Input -->
+          <div class="flex flex-col gap-1.5">
+            <div class="flex justify-between text-xs">
+              <span class="text-slate-400">Monthly Investment (₹)</span>
+              <span id="sipAmountDisplay" class="font-bold text-[#00FF88]">₹15,000</span>
+            </div>
+            <input type="range" id="sipAmountSlider" min="500" max="200000" step="500" value="15000"
+                   oninput="window.app.updateSipCalculation()" class="w-full accent-[#00FF88] cursor-pointer">
+          </div>
+
+          <!-- Expected Return % -->
+          <div class="flex flex-col gap-1.5">
+            <div class="flex justify-between text-xs">
+              <span class="text-slate-400">Expected Annual Return (%)</span>
+              <span id="sipReturnDisplay" class="font-bold text-[#00F0FF]">13.0%</span>
+            </div>
+            <input type="range" id="sipReturnSlider" min="5" max="30" step="0.5" value="13.0"
+                   oninput="window.app.updateSipCalculation()" class="w-full accent-[#00F0FF] cursor-pointer">
+          </div>
+
+          <!-- Time Horizon -->
+          <div class="flex flex-col gap-1.5">
+            <div class="flex justify-between text-xs">
+              <span class="text-slate-400">Investment Period (Years)</span>
+              <span id="sipYearsDisplay" class="font-bold text-slate-100">15 Years</span>
+            </div>
+            <input type="range" id="sipYearsSlider" min="1" max="40" step="1" value="15"
+                   oninput="window.app.updateSipCalculation()" class="w-full accent-slate-400 cursor-pointer">
+          </div>
+
+          <!-- Annual Step-Up % -->
+          <div class="flex flex-col gap-1.5">
+            <div class="flex justify-between text-xs">
+              <span class="text-slate-400">Annual Step-Up (% increase / yr)</span>
+              <span id="sipStepUpDisplay" class="font-bold text-[#FFB800]">+10% Yearly</span>
+            </div>
+            <input type="range" id="sipStepUpSlider" min="0" max="30" step="1" value="10"
+                   oninput="window.app.updateSipCalculation()" class="w-full accent-[#FFB800] cursor-pointer">
+          </div>
+
+          <!-- Expected Inflation Rate -->
+          <div class="flex flex-col gap-1.5">
+            <div class="flex justify-between text-xs">
+              <span class="text-slate-400">Inflation Deflator (CPI % p.a.)</span>
+              <span id="sipInflationDisplay" class="font-bold text-[#FF2A6D]">5.5% (Indian Avg)</span>
+            </div>
+            <input type="range" id="sipInflationSlider" min="2" max="12" step="0.5" value="5.5"
+                   oninput="window.app.updateSipCalculation()" class="w-full accent-[#FF2A6D] cursor-pointer">
+          </div>
+
+          <!-- Tax Rules Card -->
+          <div class="p-3 rounded-lg bg-[#0E131F] border border-slate-800 text-[11px] text-slate-400 flex flex-col gap-1">
+            <div class="flex items-center justify-between text-slate-300 font-bold">
+              <span>Budget 2024 LTCG Tax Rule:</span>
+              <span class="text-[#00FF88]">12.5%</span>
+            </div>
+            <span>Annual equity gain exemption up to ₹1,25,000. Balance gains taxed at 12.5%.</span>
+          </div>
+        </div>
+
+        <!-- Output Cards & Visuals (7 cols) -->
+        <div class="lg:col-span-7 flex flex-col gap-4">
+          
+          <!-- Key Metric Cards -->
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            <div class="p-3.5 rounded-xl bg-[#111622] border border-slate-800 flex flex-col gap-1">
+              <span class="text-[10px] text-slate-400 uppercase">Total Amount Invested</span>
+              <span id="sipTotalInvested" class="text-lg font-bold text-slate-100">₹${defaultData.totalInvested.toLocaleString('en-IN')}</span>
+              <span class="text-[10px] text-slate-500">With 10% annual step-up</span>
+            </div>
+
+            <div class="p-3.5 rounded-xl bg-[#111622] border border-[#00FF88]/40 flex flex-col gap-1">
+              <span class="text-[10px] text-[#00FF88] uppercase font-bold">Nominal Maturity Value</span>
+              <span id="sipNominalValue" class="text-lg font-bold text-[#00FF88]">₹${defaultData.nominalCorpus.toLocaleString('en-IN')}</span>
+              <span id="sipGainPct" class="text-[10px] text-[#00FF88]">+${defaultData.gainPercentage}% total gain</span>
+            </div>
+
+            <div class="p-3.5 rounded-xl bg-[#111622] border border-[#FF2A6D]/40 flex flex-col gap-1">
+              <span class="text-[10px] text-[#FF2A6D] uppercase font-bold">Real Purchasing Power</span>
+              <span id="sipRealValue" class="text-lg font-bold text-[#FF2A6D]">₹${defaultData.inflationAdjustedCorpus.toLocaleString('en-IN')}</span>
+              <span class="text-[10px] text-slate-400">Post-5.5% inflation</span>
+            </div>
+          </div>
+
+          <!-- Breakdown Summary & Post-Tax Wealth -->
+          <div class="p-4 rounded-xl bg-[#111622] border border-slate-800 flex flex-col gap-3">
+            <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+              <span class="text-xs uppercase font-bold text-slate-300">Net Wealth Breakdown</span>
+              <span class="text-xs text-slate-400">Post-Tax & Inflation Calibration</span>
+            </div>
+
+            <div class="flex flex-col gap-2 text-xs">
+              <div class="flex justify-between items-center">
+                <span class="text-slate-400">Estimated Gross Gains:</span>
+                <span id="sipGrossGains" class="font-bold text-[#00FF88]">₹${defaultData.estimatedGains.toLocaleString('en-IN')}</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-slate-400">Estimated LTCG Tax (12.5% > ₹1.25L):</span>
+                <span id="sipTaxAmount" class="font-bold text-[#FF2A6D]">- ₹${defaultData.estimatedLTCGTax.toLocaleString('en-IN')}</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-slate-400">Inflation Purchasing Power Erosion:</span>
+                <span id="sipInflationErosion" class="font-bold text-[#FFB800]">- ₹${defaultData.inflationErosion.toLocaleString('en-IN')}</span>
+              </div>
+              <div class="pt-2 border-t border-slate-800 flex justify-between items-center text-sm">
+                <span class="font-bold text-slate-200">Net Post-Tax Corpus:</span>
+                <span id="sipPostTaxCorpus" class="font-bold text-[#00F0FF]">₹${defaultData.postTaxCorpus.toLocaleString('en-IN')}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Yearly Progression Snapshot -->
+          <div class="p-4 rounded-xl bg-[#111622] border border-slate-800 flex flex-col gap-2">
+            <span class="text-xs font-bold text-slate-300">5-Year Growth Milestones</span>
+            <div class="grid grid-cols-3 gap-2 text-center text-xs">
+              <div class="p-2 rounded bg-[#090B10] border border-slate-800">
+                <span class="text-[10px] text-slate-400">Year 5</span>
+                <p id="sipYear5Val" class="font-bold text-slate-200 mt-0.5">₹${(defaultData.yearlyBreakdown[4]?.nominalValue || 0).toLocaleString('en-IN')}</p>
+              </div>
+              <div class="p-2 rounded bg-[#090B10] border border-slate-800">
+                <span class="text-[10px] text-slate-400">Year 10</span>
+                <p id="sipYear10Val" class="font-bold text-[#00F0FF] mt-0.5">₹${(defaultData.yearlyBreakdown[9]?.nominalValue || 0).toLocaleString('en-IN')}</p>
+              </div>
+              <div class="p-2 rounded bg-[#090B10] border border-slate-800">
+                <span class="text-[10px] text-slate-400">Year 15 (Target)</span>
+                <p id="sipYear15Val" class="font-bold text-[#00FF88] mt-0.5">₹${(defaultData.yearlyBreakdown[14]?.nominalValue || defaultData.nominalCorpus).toLocaleString('en-IN')}</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    `;
+  }
+
+  // 2. Stocks & Equity Alpha View
+  static renderStockCalculatorView(calc) {
+    const defaultData = calc.calculateStockReturns({
+      buyPrice: 1250,
+      targetOrCurrentPrice: 2150,
+      quantity: 200,
+      holdingPeriodDays: 730,
+      annualDividendYield: 1.8
+    });
+
+    return `
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <div class="lg:col-span-5 p-5 rounded-2xl bg-[#111622] border border-[#1E293B] shadow-xl flex flex-col gap-4">
+          <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+            <span class="font-bold text-sm text-slate-100 flex items-center gap-2">
+              <span class="material-symbols-outlined text-[#00F0FF] text-[20px]">trending_up</span>
+              <span>Stock Trade & Holding Parameters</span>
+            </span>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div class="flex flex-col gap-1">
+              <span class="text-xs text-slate-400">Buy Price (₹)</span>
+              <input type="number" id="stockBuyPrice" value="1250" oninput="window.app.updateStockCalculation()"
+                     class="w-full px-3 py-1.5 rounded-lg bg-[#090B10] border border-slate-700 text-xs text-slate-100 outline-none focus:border-[#00F0FF]">
+            </div>
+            <div class="flex flex-col gap-1">
+              <span class="text-xs text-slate-400">Target / Exit Price (₹)</span>
+              <input type="number" id="stockTargetPrice" value="2150" oninput="window.app.updateStockCalculation()"
+                     class="w-full px-3 py-1.5 rounded-lg bg-[#090B10] border border-slate-700 text-xs text-slate-100 outline-none focus:border-[#00F0FF]">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div class="flex flex-col gap-1">
+              <span class="text-xs text-slate-400">Quantity (Shares)</span>
+              <input type="number" id="stockQuantity" value="200" oninput="window.app.updateStockCalculation()"
+                     class="w-full px-3 py-1.5 rounded-lg bg-[#090B10] border border-slate-700 text-xs text-slate-100 outline-none focus:border-[#00F0FF]">
+            </div>
+            <div class="flex flex-col gap-1">
+              <span class="text-xs text-slate-400">Holding Days</span>
+              <input type="number" id="stockHoldingDays" value="730" oninput="window.app.updateStockCalculation()"
+                     class="w-full px-3 py-1.5 rounded-lg bg-[#090B10] border border-slate-700 text-xs text-slate-100 outline-none focus:border-[#00F0FF]">
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-1">
+            <span class="text-xs text-slate-400">Annual Dividend Yield (%)</span>
+            <input type="number" id="stockDividendYield" step="0.1" value="1.8" oninput="window.app.updateStockCalculation()"
+                   class="w-full px-3 py-1.5 rounded-lg bg-[#090B10] border border-slate-700 text-xs text-slate-100 outline-none focus:border-[#00F0FF]">
+          </div>
+        </div>
+
+        <div class="lg:col-span-7 flex flex-col gap-4">
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            <div class="p-3.5 rounded-xl bg-[#111622] border border-slate-800 flex flex-col gap-1">
+              <span class="text-[10px] text-slate-400 uppercase">Capital Invested</span>
+              <span id="stockTotalInvested" class="text-lg font-bold text-slate-100">₹${defaultData.totalInvestment.toLocaleString('en-IN')}</span>
+            </div>
+            <div class="p-3.5 rounded-xl bg-[#111622] border border-[#00F0FF]/40 flex flex-col gap-1">
+              <span class="text-[10px] text-[#00F0FF] uppercase font-bold">Annualized CAGR</span>
+              <span id="stockCagr" class="text-lg font-bold text-[#00F0FF]">${defaultData.cagrPct}%</span>
+            </div>
+            <div class="p-3.5 rounded-xl bg-[#111622] border border-[#00FF88]/40 flex flex-col gap-1">
+              <span class="text-[10px] text-[#00FF88] uppercase font-bold">Net Post-Tax Profit</span>
+              <span id="stockNetProfit" class="text-lg font-bold text-[#00FF88]">₹${defaultData.netProfitPostTax.toLocaleString('en-IN')}</span>
+            </div>
+          </div>
+
+          <div class="p-4 rounded-xl bg-[#111622] border border-slate-800 flex flex-col gap-3">
+            <div class="flex justify-between items-center text-xs">
+              <span class="text-slate-400">Gross Capital Gain:</span>
+              <span id="stockCapGain" class="font-bold text-[#00FF88]">₹${defaultData.capitalGain.toLocaleString('en-IN')}</span>
+            </div>
+            <div class="flex justify-between items-center text-xs">
+              <span class="text-slate-400">Total Dividends Received:</span>
+              <span id="stockDivReceived" class="font-bold text-[#FFB800]">₹${defaultData.totalDividends.toLocaleString('en-IN')}</span>
+            </div>
+            <div class="flex justify-between items-center text-xs">
+              <span class="text-slate-400">Tax Category & Rate:</span>
+              <span id="stockTaxCategory" class="font-bold text-[#FF2A6D]">${defaultData.isLTCG ? 'LTCG (12.5% > ₹1.25L)' : 'STCG (20%)'} (-₹${defaultData.estimatedTax.toLocaleString('en-IN')})</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  // 3. Fixed Deposit (FD) View
+  static renderFdCalculatorView(calc) {
+    const defaultData = calc.calculateFD({
+      principal: 500000,
+      interestRate: 7.50,
+      tenureYears: 3,
+      isSeniorCitizen: false,
+      taxBracketPct: 20,
+      inflationRate: 5.5
+    });
+
+    return `
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <div class="lg:col-span-5 p-5 rounded-2xl bg-[#111622] border border-[#1E293B] shadow-xl flex flex-col gap-4">
+          <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+            <span class="font-bold text-sm text-slate-100 flex items-center gap-2">
+              <span class="material-symbols-outlined text-[#FFB800] text-[20px]">account_balance</span>
+              <span>Fixed Deposit (FD) Setup</span>
+            </span>
+            <span class="text-[10px] text-slate-400">Quarterly Compounding</span>
+          </div>
+
+          <div class="flex flex-col gap-1">
+            <span class="text-xs text-slate-400">Principal Deposit (₹)</span>
+            <input type="number" id="fdPrincipal" value="500000" oninput="window.app.updateFdCalculation()"
+                   class="w-full px-3 py-1.5 rounded-lg bg-[#090B10] border border-slate-700 text-xs text-slate-100 outline-none focus:border-[#FFB800]">
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div class="flex flex-col gap-1">
+              <span class="text-xs text-slate-400">Interest Rate (% p.a.)</span>
+              <input type="number" id="fdInterestRate" step="0.05" value="7.50" oninput="window.app.updateFdCalculation()"
+                     class="w-full px-3 py-1.5 rounded-lg bg-[#090B10] border border-slate-700 text-xs text-slate-100 outline-none focus:border-[#FFB800]">
+            </div>
+            <div class="flex flex-col gap-1">
+              <span class="text-xs text-slate-400">Tenure (Years)</span>
+              <input type="number" id="fdTenure" value="3" oninput="window.app.updateFdCalculation()"
+                     class="w-full px-3 py-1.5 rounded-lg bg-[#090B10] border border-slate-700 text-xs text-slate-100 outline-none focus:border-[#FFB800]">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div class="flex flex-col gap-1">
+              <span class="text-xs text-slate-400">Your Tax Slab (%)</span>
+              <select id="fdTaxSlab" onchange="window.app.updateFdCalculation()"
+                      class="w-full px-3 py-1.5 rounded-lg bg-[#090B10] border border-slate-700 text-xs text-slate-100 outline-none">
+                <option value="0">0% (Nil)</option>
+                <option value="10">10% Slab</option>
+                <option value="20" selected>20% Slab</option>
+                <option value="30">30% Highest Slab</option>
+              </select>
+            </div>
+            <div class="flex flex-col justify-end">
+              <label class="flex items-center gap-2 text-xs text-slate-300 cursor-pointer pb-2">
+                <input type="checkbox" id="fdSeniorCitizen" onchange="window.app.updateFdCalculation()" class="accent-[#FFB800]">
+                <span>Senior Citizen (+0.5%)</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="lg:col-span-7 flex flex-col gap-4">
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            <div class="p-3.5 rounded-xl bg-[#111622] border border-slate-800 flex flex-col gap-1">
+              <span class="text-[10px] text-slate-400 uppercase">Gross Maturity Value</span>
+              <span id="fdGrossMaturity" class="text-lg font-bold text-slate-100">₹${defaultData.maturityAmount.toLocaleString('en-IN')}</span>
+            </div>
+            <div class="p-3.5 rounded-xl bg-[#111622] border border-[#FFB800]/40 flex flex-col gap-1">
+              <span class="text-[10px] text-[#FFB800] uppercase font-bold">Post-Tax Maturity</span>
+              <span id="fdPostTaxMaturity" class="text-lg font-bold text-[#FFB800]">₹${defaultData.postTaxMaturity.toLocaleString('en-IN')}</span>
+            </div>
+            <div class="p-3.5 rounded-xl bg-[#111622] border border-[#FF2A6D]/40 flex flex-col gap-1">
+              <span class="text-[10px] text-[#FF2A6D] uppercase font-bold">Real Value (Post-Inflation)</span>
+              <span id="fdRealPower" class="text-lg font-bold text-[#FF2A6D]">₹${defaultData.realPurchasingPower.toLocaleString('en-IN')}</span>
+            </div>
+          </div>
+
+          <div class="p-4 rounded-xl bg-[#111622] border border-slate-800 flex flex-col gap-2.5 text-xs">
+            <div class="flex justify-between items-center">
+              <span class="text-slate-400">Total Interest Earned:</span>
+              <span id="fdInterestEarned" class="font-bold text-[#00FF88]">₹${defaultData.totalInterestEarned.toLocaleString('en-IN')}</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-slate-400">Income Tax on Interest (${defaultData.taxBracketApplied}%):</span>
+              <span id="fdTaxDeducted" class="font-bold text-[#FF2A6D]">- ₹${defaultData.totalTax.toLocaleString('en-IN')}</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-slate-400">Real Post-Inflation Net Return Rate:</span>
+              <span id="fdRealRate" class="font-bold text-[#00F0FF]">${defaultData.realReturnRate}% p.a.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  // 4. Bonds & SGB View
+  static renderBondCalculatorView(calc) {
+    const defaultData = calc.calculateBond({
+      faceValue: 1000,
+      marketPrice: 975,
+      couponRate: 7.75,
+      tenureYears: 5,
+      isSGB: false
+    });
+
+    return `
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <div class="lg:col-span-5 p-5 rounded-2xl bg-[#111622] border border-[#1E293B] shadow-xl flex flex-col gap-4">
+          <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+            <span class="font-bold text-sm text-slate-100 flex items-center gap-2">
+              <span class="material-symbols-outlined text-[#9d4edd] text-[20px]">verified</span>
+              <span>Bond & SGB Configuration</span>
+            </span>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div class="flex flex-col gap-1">
+              <span class="text-xs text-slate-400">Face Value (₹)</span>
+              <input type="number" id="bondFaceValue" value="1000" oninput="window.app.updateBondCalculation()"
+                     class="w-full px-3 py-1.5 rounded-lg bg-[#090B10] border border-slate-700 text-xs text-slate-100 outline-none focus:border-[#9d4edd]">
+            </div>
+            <div class="flex flex-col gap-1">
+              <span class="text-xs text-slate-400">Market Price (₹)</span>
+              <input type="number" id="bondMarketPrice" value="975" oninput="window.app.updateBondCalculation()"
+                     class="w-full px-3 py-1.5 rounded-lg bg-[#090B10] border border-slate-700 text-xs text-slate-100 outline-none focus:border-[#9d4edd]">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div class="flex flex-col gap-1">
+              <span class="text-xs text-slate-400">Coupon Rate (% p.a.)</span>
+              <input type="number" id="bondCouponRate" step="0.05" value="7.75" oninput="window.app.updateBondCalculation()"
+                     class="w-full px-3 py-1.5 rounded-lg bg-[#090B10] border border-slate-700 text-xs text-slate-100 outline-none focus:border-[#9d4edd]">
+            </div>
+            <div class="flex flex-col gap-1">
+              <span class="text-xs text-slate-400">Tenure (Years)</span>
+              <input type="number" id="bondTenure" value="5" oninput="window.app.updateBondCalculation()"
+                     class="w-full px-3 py-1.5 rounded-lg bg-[#090B10] border border-slate-700 text-xs text-slate-100 outline-none focus:border-[#9d4edd]">
+            </div>
+          </div>
+
+          <label class="flex items-center gap-2 text-xs text-slate-300 cursor-pointer pt-1">
+            <input type="checkbox" id="bondIsSGB" onchange="window.app.updateBondCalculation()" class="accent-[#9d4edd]">
+            <span>Sovereign Gold Bond (SGB) - 100% Tax-Free Capital Gains</span>
+          </label>
+        </div>
+
+        <div class="lg:col-span-7 flex flex-col gap-4">
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            <div class="p-3.5 rounded-xl bg-[#111622] border border-[#9d4edd]/40 flex flex-col gap-1">
+              <span class="text-[10px] text-[#9d4edd] uppercase font-bold">Yield to Maturity (YTM)</span>
+              <span id="bondYtm" class="text-lg font-bold text-[#9d4edd]">${defaultData.ytmPct}%</span>
+            </div>
+            <div class="p-3.5 rounded-xl bg-[#111622] border border-[#00FF88]/40 flex flex-col gap-1">
+              <span class="text-[10px] text-[#00FF88] uppercase font-bold">Total Payout at Maturity</span>
+              <span id="bondTotalCashflow" class="text-lg font-bold text-[#00FF88]">₹${(defaultData.faceValue + defaultData.totalCoupons).toLocaleString('en-IN')}</span>
+            </div>
+            <div class="p-3.5 rounded-xl bg-[#111622] border border-slate-800 flex flex-col gap-1">
+              <span class="text-[10px] text-slate-400 uppercase">Post-Tax Profit</span>
+              <span id="bondPostTaxProfit" class="text-lg font-bold text-slate-100">₹${defaultData.postTaxProfit.toLocaleString('en-IN')}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  // 5. Inflation & FIRE View
+  static renderInflationCalculatorView(calc) {
+    const defaultData = calc.calculateInflationErosion({
+      currentExpensesMonthly: 60000,
+      inflationRate: 6.0,
+      yearsInFuture: 15,
+      retirementDurationYears: 25
+    });
+
+    return `
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <div class="lg:col-span-5 p-5 rounded-2xl bg-[#111622] border border-[#1E293B] shadow-xl flex flex-col gap-4">
+          <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+            <span class="font-bold text-sm text-slate-100 flex items-center gap-2">
+              <span class="material-symbols-outlined text-[#FF2A6D] text-[20px]">local_fire_department</span>
+              <span>FIRE & Inflation Modeler</span>
+            </span>
+          </div>
+
+          <div class="flex flex-col gap-1">
+            <span class="text-xs text-slate-400">Current Monthly Expenses (₹)</span>
+            <input type="number" id="infMonthlyExp" value="60000" oninput="window.app.updateInflationCalculation()"
+                   class="w-full px-3 py-1.5 rounded-lg bg-[#090B10] border border-slate-700 text-xs text-slate-100 outline-none focus:border-[#FF2A6D]">
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div class="flex flex-col gap-1">
+              <span class="text-xs text-slate-400">Inflation Rate (% p.a.)</span>
+              <input type="number" id="infRate" step="0.5" value="6.0" oninput="window.app.updateInflationCalculation()"
+                     class="w-full px-3 py-1.5 rounded-lg bg-[#090B10] border border-slate-700 text-xs text-slate-100 outline-none focus:border-[#FF2A6D]">
+            </div>
+            <div class="flex flex-col gap-1">
+              <span class="text-xs text-slate-400">Years until Retirement</span>
+              <input type="number" id="infYears" value="15" oninput="window.app.updateInflationCalculation()"
+                     class="w-full px-3 py-1.5 rounded-lg bg-[#090B10] border border-slate-700 text-xs text-slate-100 outline-none focus:border-[#FF2A6D]">
+            </div>
+          </div>
+        </div>
+
+        <div class="lg:col-span-7 flex flex-col gap-4">
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            <div class="p-3.5 rounded-xl bg-[#111622] border border-[#FF2A6D]/40 flex flex-col gap-1">
+              <span class="text-[10px] text-[#FF2A6D] uppercase font-bold">Future Monthly Expense</span>
+              <span id="infFutureMonthly" class="text-lg font-bold text-[#FF2A6D]">₹${defaultData.futureMonthly.toLocaleString('en-IN')}</span>
+              <span class="text-[10px] text-slate-500">${defaultData.inflationMultiplier}x cost multiplier</span>
+            </div>
+            <div class="p-3.5 rounded-xl bg-[#111622] border border-[#00FF88]/40 flex flex-col gap-1">
+              <span class="text-[10px] text-[#00FF88] uppercase font-bold">Required Retirement Corpus</span>
+              <span id="infRequiredCorpus" class="text-lg font-bold text-[#00FF88]">₹${(defaultData.requiredCorpus / 10000000).toFixed(2)} Cr</span>
+              <span class="text-[10px] text-slate-400">₹${defaultData.requiredCorpus.toLocaleString('en-IN')}</span>
+            </div>
+            <div class="p-3.5 rounded-xl bg-[#111622] border border-slate-800 flex flex-col gap-1">
+              <span class="text-[10px] text-slate-400 uppercase">Idle Cash Purchasing Power</span>
+              <span id="infIdleWorth" class="text-lg font-bold text-slate-100">₹${defaultData.idleCashFutureWorth.toLocaleString('en-IN')}</span>
+              <span class="text-[10px] text-[#FF2A6D]">-${defaultData.idleCashErosionPct}% purchasing loss</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  // 6. Multi-Asset Comparison View
+  static renderAssetComparisonView(calc) {
+    const list = calc.compareAllAssets({
+      initialLumpsum: 200000,
+      monthlySIP: 15000,
+      tenureYears: 10,
+      inflationRate: 5.5
+    });
+
+    return `
+      <div class="flex flex-col gap-4">
+        <div class="p-4 rounded-xl bg-[#111622] border border-[#1E293B] flex items-center justify-between text-xs text-slate-300">
+          <span>Benchmarked over <strong>10 Years</strong> with ₹15,000/month additions & 5.5% annual inflation:</span>
+          <span class="text-[#00FF88] font-bold">Budget 2024 Tax Calibrated</span>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left font-mono text-xs border border-slate-800 rounded-xl overflow-hidden">
+            <thead class="bg-[#0E131F] text-slate-400 text-[11px] uppercase border-b border-slate-800">
+              <tr>
+                <th class="p-3">Asset Class</th>
+                <th class="p-3">Expected CAGR</th>
+                <th class="p-3">Risk Level</th>
+                <th class="p-3">Nominal Corpus</th>
+                <th class="p-3">Real Purchasing Power</th>
+                <th class="p-3">Post-Tax Net Wealth</th>
+                <th class="p-3">Tax Rules</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800 bg-[#111622]">
+              ${list.map(item => `
+                <tr class="hover:bg-[#191c22] transition-colors">
+                  <td class="p-3 font-bold text-slate-100">${item.asset}</td>
+                  <td class="p-3 text-[#00FF88] font-bold">${item.cagrExpected}</td>
+                  <td class="p-3 text-slate-400">${item.riskLevel}</td>
+                  <td class="p-3 text-slate-200">₹${item.nominalCorpus.toLocaleString('en-IN')}</td>
+                  <td class="p-3 text-[#00F0FF] font-bold">₹${item.realCorpus.toLocaleString('en-IN')}</td>
+                  <td class="p-3 text-[#00FF88] font-bold">₹${item.postTaxCorpus.toLocaleString('en-IN')}</td>
+                  <td class="p-3 text-[11px] text-slate-400">${item.taxRules}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `;
+  }
 }
 
 window.UIComponents = UIComponents;
