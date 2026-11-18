@@ -158,6 +158,28 @@ class UIComponents {
           ` : ''}
         </div>
 
+        <!-- RAG Institutional Knowledge Grounding -->
+        ${advice.ragGrounding && advice.ragGrounding.length > 0 ? `
+          <div class="p-2 rounded-lg bg-[#090B10] border border-[#00F0FF]/30 flex flex-col gap-1.5 text-[10px]">
+            <div class="flex items-center justify-between">
+              <span class="text-[#00F0FF] font-bold flex items-center gap-1">
+                <span class="material-symbols-outlined text-[13px]">auto_stories</span>
+                <span>RAG Institutional Grounding:</span>
+              </span>
+              <span class="text-slate-400 font-mono">Gemini text-embedding-004</span>
+            </div>
+            <div class="flex flex-wrap gap-1">
+              ${advice.ragGrounding.map(g => `
+                <span class="px-2 py-0.5 rounded bg-[#111622] border border-slate-700 text-slate-200 flex items-center gap-1" title="Cosine Similarity: ${(g.similarity * 100).toFixed(1)}%">
+                  <span class="w-1.5 h-1.5 rounded-full bg-[#00FF88]"></span>
+                  <span class="font-bold">${g.title}</span>
+                  <span class="text-[#00F0FF]">(${(g.similarity * 100).toFixed(0)}%)</span>
+                </span>
+              `).join('')}
+            </div>
+          </div>
+        ` : ''}
+
         <!-- 1-Click Action Button: Apply Levels to Ticket -->
         <div class="flex items-center gap-2 pt-1">
           <button type="button" onclick="window.app.applyGeminiLevels('${stock.symbol}')"
@@ -2855,6 +2877,316 @@ class UIComponents {
           </div>
 
         </div>
+      </div>
+    `;
+  }
+
+  // ==========================================
+  // SCREEN: AI RAG & MCP INTELLIGENCE STUDIO
+  // ==========================================
+  static renderRagMcpStudio(stream) {
+    const playbooks = [
+      {
+        id: 'playbook-orb-breakout',
+        title: 'Opening Range Breakout (ORB) Institutional Playbook',
+        category: 'PRICE_ACTION_STRATEGY',
+        tags: ['ORB', 'Breakout', 'RVOL', '15m Range', 'Prime Window'],
+        rulesCount: 4,
+        description: 'Rules for trading the 09:15-09:30 range breakout on >1.8x RVOL above VWAP with false breakout traps suppression.'
+      },
+      {
+        id: 'playbook-vwap-mean-reversion',
+        title: 'Institutional VWAP Equilibrium & Bounce Playbook',
+        category: 'MEAN_REVERSION_STRATEGY',
+        tags: ['VWAP', 'Equilibrium', 'Institutional Floor', '9 EMA Confluence'],
+        rulesCount: 4,
+        description: 'High-probability mean-reversion bounce entries at institutional VWAP with 9 EMA / 20 EMA momentum confirmation.'
+      },
+      {
+        id: 'playbook-corporate-demerger',
+        title: 'Corporate Restructuring & Demerger Price Action Playbook',
+        category: 'CORPORATE_ACTION',
+        tags: ['Demerger', 'Spin-off', 'Tata Motors', 'ITC Hotels', 'Base Adjustment'],
+        rulesCount: 4,
+        description: 'Protocols for handling post-demerger base price readjustments, special pre-open discovery, and volatility bands.'
+      },
+      {
+        id: 'playbook-sebi-circuit-risk',
+        title: 'SEBI Intraday Circuit Band & Risk Management Playbook',
+        category: 'RISK_MANAGEMENT',
+        tags: ['SEBI', 'Circuit Bands', 'Upper Circuit', 'Lower Circuit', 'F&O Ban'],
+        rulesCount: 4,
+        description: 'Regulatory circuit limit guardrails (5%/10%/20%), F&O Ban rules (95% MWPL), and mandatory 15:15 IST auto-square off.'
+      },
+      {
+        id: 'playbook-earnings-momentum',
+        title: 'Quarterly Earnings & Catalyst Continuation Playbook',
+        category: 'CATALYST_MOMENTUM',
+        tags: ['Earnings', 'Catalyst', 'Guidance', 'Delivery Volume', 'Gap Up'],
+        rulesCount: 4,
+        description: 'High-conviction earnings repricing rules: >40% delivery volume confirmation, guidance evaluation, and gap-fill invalidations.'
+      }
+    ];
+
+    const mcpTools = [
+      { name: "get_stock_quote", desc: "Fetch live official NSE quote, LTP, VWAP, 15m ORH/ORL, and RVOL.", defaultArgs: '{"symbol":"TATAMOTORS"}' },
+      { name: "get_technical_indicators", desc: "Calculate real-time RSI, MACD, ATR, EMA 9/20, and Camarilla pivots.", defaultArgs: '{"symbol":"TATAMOTORS"}' },
+      { name: "query_trading_knowledge", desc: "Execute semantic RAG vector search across institutional trading playbooks.", defaultArgs: '{"query":"ORB breakout rules with volume confirmation","topK":2}' },
+      { name: "calculate_position_size", desc: "Compute 1% risk position sizing with exact SL, margin, and 1:2 / 1:3 targets.", defaultArgs: '{"symbol":"TATAMOTORS","capital":100000,"riskPercent":1.0,"entryPrice":435.00,"stopLoss":431.50}' },
+      { name: "scan_market_screener", desc: "Scan 50 frontline NSE equities based on RVOL, VWAP, and momentum scores.", defaultArgs: '{"minRvol":1.8,"aboveVwapOnly":true,"minScore":75}' },
+      { name: "execute_mis_order", desc: "Simulate or route an intraday MIS trade order to Sandbox or Groww Broker Gateway.", defaultArgs: '{"symbol":"TATAMOTORS","transactionType":"BUY","quantity":100,"price":435.00,"stopLoss":431.50,"target":442.00}' }
+    ];
+
+    return `
+      <div class="p-4 md:p-6 flex flex-col gap-6 font-mono text-xs">
+        
+        <!-- Header & Architecture Overview -->
+        <div class="bg-gradient-to-r from-[#111622] via-[#191c22] to-[#090B10] border border-[#00F0FF]/40 rounded-xl p-5 shadow-2xl flex flex-col gap-3">
+          <div class="flex items-center justify-between flex-wrap gap-2 pb-3 border-b border-slate-800">
+            <div class="flex items-center gap-2.5">
+              <div class="w-8 h-8 rounded-lg bg-[#00F0FF]/20 border border-[#00F0FF] flex items-center justify-center glow-cyan">
+                <span class="material-symbols-outlined text-[#00F0FF] text-[20px]">hub</span>
+              </div>
+              <div>
+                <h1 class="font-mono text-lg font-bold text-slate-100 flex items-center gap-2">
+                  <span>AI RAG &amp; Model Context Protocol (MCP) Studio</span>
+                  <span class="px-2 py-0.5 rounded bg-[#00F0FF]/20 text-[#00F0FF] text-[10px] font-bold">GEMINI INTEGRATION</span>
+                </h1>
+                <p class="text-xs text-slate-400">Institutional Knowledge Retrieval (RAG) &amp; Open Standard Tool Calling (MCP JSON-RPC 2.0)</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-1 rounded-lg bg-[#00FF88]/15 text-[#00FF88] border border-[#00FF88]/30 font-bold flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-[#00FF88] pulse-live"></span>
+                <span>RAG: 5 PLAYBOOKS ACTIVE</span>
+              </span>
+              <span class="px-2.5 py-1 rounded-lg bg-[#00F0FF]/15 text-[#00F0FF] border border-[#00F0FF]/30 font-bold flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-[#00F0FF]"></span>
+                <span>MCP: JSON-RPC 2.0 (ONLINE)</span>
+              </span>
+            </div>
+          </div>
+
+          <!-- Educational Pipeline Architecture Pill Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 pt-1">
+            <div class="p-3 rounded-lg bg-[#090B10] border border-slate-800 flex flex-col gap-1">
+              <span class="text-[#00F0FF] font-bold text-xs flex items-center gap-1">
+                <span class="material-symbols-outlined text-[15px]">auto_stories</span>
+                <span>1. Retrieval-Augmented Generation</span>
+              </span>
+              <p class="text-[11px] text-slate-400 leading-normal">
+                Converts institutional playbooks into vector embeddings via Gemini <span class="text-slate-200 font-bold">text-embedding-004</span>. When evaluating a setup, cosine similarity searches match the most relevant rules with zero hallucination.
+              </p>
+            </div>
+
+            <div class="p-3 rounded-lg bg-[#090B10] border border-slate-800 flex flex-col gap-1">
+              <span class="text-[#00FF88] font-bold text-xs flex items-center gap-1">
+                <span class="material-symbols-outlined text-[15px]">terminal</span>
+                <span>2. Model Context Protocol (MCP)</span>
+              </span>
+              <p class="text-[11px] text-slate-400 leading-normal">
+                Open JSON-RPC 2.0 standard protocol exposing live market tools (<span class="text-slate-200">get_quote</span>, <span class="text-slate-200">technicals</span>, <span class="text-slate-200">order_execution</span>) so Gemini can autonomously query live exchange state.
+              </p>
+            </div>
+
+            <div class="p-3 rounded-lg bg-[#090B10] border border-slate-800 flex flex-col gap-1">
+              <span class="text-[#FFB800] font-bold text-xs flex items-center gap-1">
+                <span class="material-symbols-outlined text-[15px]">psychology</span>
+                <span>3. Disciplined Intraday Grounding</span>
+              </span>
+              <p class="text-[11px] text-slate-400 leading-normal">
+                Gemini prompts are automatically augmented with retrieved rules. Every entry, stop-loss, and target is bound by strict institutional risk parameters (1:2 R:R, SEBI circuits, 15:15 square-off).
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION 1: INTERACTIVE RAG SEMANTIC VECTOR SEARCH LAB -->
+        <section class="bg-[#111622] border border-[#1E293B] rounded-xl p-4 flex flex-col gap-3 shadow-lg">
+          <div class="flex items-center justify-between pb-2 border-b border-slate-800 flex-wrap gap-2">
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-[#00F0FF] text-[18px]">search_insights</span>
+              <h2 class="text-sm font-bold text-slate-100">RAG Semantic Vector Search Laboratory</h2>
+            </div>
+            <span class="text-[10px] text-slate-400">Cosine Similarity Vector Matching &bull; In-Memory Store</span>
+          </div>
+
+          <!-- Search Input & Pre-canned Query Pills -->
+          <div class="flex flex-col gap-2.5">
+            <div class="flex items-center gap-2">
+              <div class="relative flex-1">
+                <input type="text" id="ragQueryInput"
+                       placeholder="Enter natural language trade setup (e.g. 'How to trade ORB breakout with RVOL > 2.0')..."
+                       value="15m Opening Range Breakout rules with high volume confirmation"
+                       class="w-full px-3 py-2 rounded-lg bg-[#090B10] border border-slate-700 text-slate-100 placeholder-slate-500 text-xs focus:border-[#00F0FF] outline-none" />
+              </div>
+              <div class="flex items-center gap-2 shrink-0">
+                <label class="text-[10px] text-slate-400 flex items-center gap-1">
+                  <span>Top-K:</span>
+                  <select id="ragTopKSelect" class="bg-[#090B10] border border-slate-700 text-[#00F0FF] px-1.5 py-1 rounded text-xs font-bold">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3" selected>3</option>
+                    <option value="5">5</option>
+                  </select>
+                </label>
+                <button type="button" onclick="window.app.executeRagQuery()"
+                        class="px-3 py-2 rounded-lg bg-[#00F0FF] hover:bg-[#33f3ff] text-[#090B10] font-bold text-xs flex items-center gap-1 transition-all shadow-md">
+                  <span class="material-symbols-outlined text-[15px]">send</span>
+                  <span>Query Vector Store</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Quick Preset Queries -->
+            <div class="flex items-center gap-1.5 flex-wrap">
+              <span class="text-[10px] text-slate-400 font-bold uppercase mr-1">Sample Queries:</span>
+              ${[
+                '15m Opening Range Breakout rules with high volume confirmation',
+                'Institutional VWAP bounce entry criteria and stop loss',
+                'Corporate Demerger price discovery and base price realignment',
+                'SEBI circuit band limits and F&O ban risk controls',
+                'Quarterly earnings momentum gap up continuation rules'
+              ].map(q => `
+                <button type="button" onclick="document.getElementById('ragQueryInput').value = '${q}'; window.app.executeRagQuery();"
+                        class="px-2 py-0.5 rounded bg-[#191c22] hover:bg-slate-800 text-slate-300 hover:text-[#00F0FF] border border-slate-800 text-[10px] transition-colors">
+                  ${q.length > 35 ? q.slice(0, 32) + '...' : q}
+                </button>
+              `).join('')}
+            </div>
+          </div>
+
+          <!-- RAG Results Output Area -->
+          <div id="ragResultsArea" class="flex flex-col gap-2.5 pt-2">
+            <div class="p-3 rounded-lg bg-[#090B10] border border-slate-800 text-slate-400 text-center py-6">
+              <span class="material-symbols-outlined text-[24px] text-[#00F0FF] block mb-1">psychology_alt</span>
+              <span>Click "Query Vector Store" above or choose a sample query to test live semantic retrieval.</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 2: INSTITUTIONAL TRADING PLAYBOOKS DIRECTORY -->
+        <section class="bg-[#111622] border border-[#1E293B] rounded-xl p-4 flex flex-col gap-3 shadow-lg">
+          <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-[#00FF88] text-[18px]">menu_book</span>
+              <h2 class="text-sm font-bold text-slate-100">Institutional Playbooks Ingested in Vector Store</h2>
+            </div>
+            <span class="text-[10px] text-[#00FF88] font-bold">5 Knowledge Modules Indexed</span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+            ${playbooks.map(pb => `
+              <div class="p-3 rounded-lg bg-[#191c22] border border-slate-800 hover:border-slate-700 flex flex-col justify-between gap-2.5 transition-all">
+                <div class="flex flex-col gap-1">
+                  <div class="flex items-center justify-between">
+                    <span class="px-1.5 py-0.2 rounded bg-slate-800 text-[#00F0FF] text-[9px] font-bold">${pb.category}</span>
+                    <span class="text-[10px] text-slate-400 font-bold">${pb.rulesCount} Execution Rules</span>
+                  </div>
+                  <h3 class="text-xs font-bold text-slate-100">${pb.title}</h3>
+                  <p class="text-[11px] text-slate-400 leading-normal">${pb.description}</p>
+                </div>
+                <div class="flex flex-wrap gap-1 pt-1 border-t border-slate-800/80">
+                  ${pb.tags.map(t => `<span class="px-1.5 py-0.2 rounded bg-[#090B10] text-slate-400 text-[9px] border border-slate-800">${t}</span>`).join('')}
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </section>
+
+        <!-- SECTION 3: MODEL CONTEXT PROTOCOL (MCP) LIVE TOOL TESTING CONSOLE -->
+        <section class="bg-[#111622] border border-[#1E293B] rounded-xl p-4 flex flex-col gap-3 shadow-lg">
+          <div class="flex items-center justify-between pb-2 border-b border-slate-800 flex-wrap gap-2">
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-[#FFB800] text-[18px]">build</span>
+              <h2 class="text-sm font-bold text-slate-100">Model Context Protocol (MCP) Tool Calling Console</h2>
+            </div>
+            <span class="text-[10px] text-slate-400">JSON-RPC 2.0 Method: <code class="text-[#00F0FF]">tools/call</code></span>
+          </div>
+
+          <p class="text-slate-400 text-[11px] leading-relaxed">
+            These tools are registered with GROVIQUE's MCP Server. You can trigger live test invocations below to inspect the structured JSON payloads that Gemini inspects and executes:
+          </p>
+
+          <!-- 2-Column Grid: Tools on Left / Real-Time JSON-RPC Console on Right -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
+            
+            <!-- Left 6 Cols: Available MCP Tools List -->
+            <div class="lg:col-span-6 flex flex-col gap-2">
+              ${mcpTools.map(tool => `
+                <div class="p-3 rounded-lg bg-[#191c22] border border-slate-800 hover:border-slate-700 flex flex-col gap-2 transition-all">
+                  <div class="flex items-center justify-between">
+                    <span class="font-bold text-xs text-[#00F0FF] flex items-center gap-1">
+                      <span class="material-symbols-outlined text-[14px]">code</span>
+                      <span>${tool.name}</span>
+                    </span>
+                    <button type="button" onclick="window.app.executeMcpTool('${tool.name}', ${JSON.stringify(tool.defaultArgs).replace(/"/g, '&quot;')})"
+                            class="px-2 py-1 rounded bg-[#090B10] hover:bg-[#00FF88]/20 text-[#00FF88] border border-slate-700 hover:border-[#00FF88] font-bold text-[10px] flex items-center gap-1 transition-all">
+                      <span class="material-symbols-outlined text-[12px]">play_arrow</span>
+                      <span>Execute Tool</span>
+                    </button>
+                  </div>
+                  <p class="text-[11px] text-slate-400">${tool.desc}</p>
+                  <div class="bg-[#090B10] p-1.5 rounded border border-slate-800 text-[10px] text-slate-400 truncate">
+                    <span class="text-slate-500">Default Args:</span> <code class="text-slate-300">${tool.defaultArgs}</code>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+
+            <!-- Right 6 Cols: Live JSON-RPC 2.0 Response Terminal -->
+            <div class="lg:col-span-6 flex flex-col gap-2">
+              <div class="bg-[#090B10] border border-slate-800 rounded-xl overflow-hidden shadow-2xl flex flex-col">
+                <div class="px-3 py-2 bg-[#111622] border-b border-slate-800 flex items-center justify-between text-[11px]">
+                  <div class="flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-[#00FF88] pulse-live"></span>
+                    <span class="text-slate-200 font-bold">MCP JSON-RPC Terminal</span>
+                  </div>
+                  <span id="mcpLatencyDisplay" class="text-[10px] text-slate-500 font-mono">Ready for execution</span>
+                </div>
+                <div class="p-3 overflow-x-auto max-h-[460px]">
+                  <pre id="mcpTerminalOutput" class="text-[11px] font-mono text-[#00FF88] leading-tight select-text">// Select any MCP tool on the left to execute.
+// JSON-RPC 2.0 response payload with latency will render here.</pre>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- SECTION 4: MCP RESOURCES INSPECTOR -->
+        <section class="bg-[#111622] border border-[#1E293B] rounded-xl p-4 flex flex-col gap-3 shadow-lg">
+          <div class="flex items-center justify-between pb-2 border-b border-slate-800 flex-wrap gap-2">
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-[#00F0FF] text-[18px]">folder_open</span>
+              <h2 class="text-sm font-bold text-slate-100">Live MCP Context Resources (<code class="text-[#00F0FF]">resources/read</code>)</h2>
+            </div>
+            <span class="text-[10px] text-slate-400">Structured State Feeds for Gemini Context Injection</span>
+          </div>
+
+          <div class="flex items-center gap-2 flex-wrap">
+            <button type="button" onclick="window.app.readMcpResource('grovique://market/status')"
+                    class="px-2.5 py-1 rounded bg-[#191c22] hover:bg-slate-800 text-[#00F0FF] border border-slate-800 font-bold text-xs flex items-center gap-1 transition-all">
+              <span class="material-symbols-outlined text-[14px]">schedule</span>
+              <span>grovique://market/status</span>
+            </button>
+            <button type="button" onclick="window.app.readMcpResource('grovique://market/breadth')"
+                    class="px-2.5 py-1 rounded bg-[#191c22] hover:bg-slate-800 text-[#00FF88] border border-slate-800 font-bold text-xs flex items-center gap-1 transition-all">
+              <span class="material-symbols-outlined text-[14px]">analytics</span>
+              <span>grovique://market/breadth</span>
+            </button>
+            <button type="button" onclick="window.app.readMcpResource('grovique://rag/playbooks')"
+                    class="px-2.5 py-1 rounded bg-[#191c22] hover:bg-slate-800 text-[#FFB800] border border-slate-800 font-bold text-xs flex items-center gap-1 transition-all">
+              <span class="material-symbols-outlined text-[14px]">auto_stories</span>
+              <span>grovique://rag/playbooks</span>
+            </button>
+          </div>
+
+          <div class="bg-[#090B10] p-3 rounded-lg border border-slate-800 overflow-x-auto max-h-[220px]">
+            <pre id="mcpResourceOutput" class="text-[11px] font-mono text-slate-300 leading-tight">// Click an MCP resource URI above to read live state</pre>
+          </div>
+        </section>
+
       </div>
     `;
   }

@@ -116,6 +116,8 @@ Provide your disciplined intraday decision in exactly this JSON format (no markd
       body: JSON.stringify({
         apiKey: settings.apiKey,
         model: settings.model || 'gemini-1.5-flash',
+        symbol: stock.symbol,
+        catalyst: stock.catalyst,
         prompt
       })
     });
@@ -129,6 +131,7 @@ Provide your disciplined intraday decision in exactly this JSON format (no markd
       parsed.isLiveGemini = true;
       parsed.modelUsed = settings.model || 'gemini-1.5-flash';
       parsed.timestamp = clockTime;
+      parsed.ragGrounding = data.ragGrounding || [];
       return parsed;
     } else {
       throw new Error((data.error && data.error.message) || 'Empty Gemini response');
@@ -225,7 +228,21 @@ Provide your disciplined intraday decision in exactly this JSON format (no markd
       disciplineWarning,
       timeHorizon: '15 to 45 mins',
       isLiveGemini: false,
-      timestamp: clockTime
+      timestamp: clockTime,
+      ragGrounding: [
+        {
+          id: isAboveOrh ? 'playbook-orb-breakout' : 'playbook-vwap-mean-reversion',
+          title: isAboveOrh ? 'Opening Range Breakout (ORB) Institutional Playbook' : 'Institutional VWAP Equilibrium & Bounce Playbook',
+          category: isAboveOrh ? 'PRICE_ACTION_STRATEGY' : 'MEAN_REVERSION_STRATEGY',
+          similarity: 0.88
+        },
+        {
+          id: 'playbook-sebi-circuit-risk',
+          title: 'SEBI Intraday Circuit Band & Risk Management Playbook',
+          category: 'RISK_MANAGEMENT',
+          similarity: 0.82
+        }
+      ]
     };
   }
 

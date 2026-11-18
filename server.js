@@ -14,6 +14,16 @@ try {
   console.warn('Could not load mockData.js in server:', e.message);
 }
 
+// Load RAG Engine & Model Context Protocol (MCP) Server
+let ragEngine = null;
+let mcpServer = null;
+try {
+  ragEngine = require('./server/ragEngine');
+  mcpServer = require('./server/mcpServer');
+} catch (e) {
+  console.warn('[Server] Could not load RAG/MCP modules:', e.message);
+}
+
 const PORT = 3000;
 const MIME_TYPES = {
   '.html': 'text/html',
@@ -80,19 +90,92 @@ const server = http.createServer(async (req, res) => {
   }
 
   // ========================================================
-  // API ENDPOINT: /api/gemini/analyze (Gemini Intraday AI Proxy)
+  // API ENDPOINT: /api/mcp (Model Context Protocol JSON-RPC 2.0)
+  // ========================================================
+  if (pathname === '/api/mcp' && req.method === 'POST') {
+    try {
+      const rpcRequest = await parseJsonBody(req);
+      if (!mcpServer) {
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ jsonrpc: "2.0", id: rpcRequest.id, error: { code: -32000, message: "MCP Server not loaded" } }));
+        return;
+      }
+      const rpcResponse = await mcpServer.handleRequest(rpcRequest);
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify(rpcResponse || { jsonrpc: "2.0", id: rpcRequest.id, result: "OK" }));
+      return;
+    } catch (err) {
+      res.writeHead(500, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ jsonrpc: "2.0", id: null, error: { code: -32603, message: err.message } }));
+      return;
+    }
+  }
+
+  // ========================================================
+  // API ENDPOINT: /api/rag/query (Semantic Vector Search)
+  // ========================================================
+  if (pathname === '/api/rag/query' && req.method === 'POST') {
+    try {
+      const body = await parseJsonBody(req);
+      const query = body.query || 'ORB breakout rules';
+      const topK = body.topK || 3;
+      const apiKey = body.apiKey || '';
+      
+      const results = ragEngine ? await ragEngine.search(query, topK, apiKey) : [];
+      const formatted = ragEngine ? ragEngine.formatRAGContextForLLM(results) : '';
+
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ query, matchCount: results.length, results, formattedContext: formatted }));
+      return;
+    } catch (err) {
+      res.writeHead(500, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: err.message }));
+      return;
+    }
+  }
+
+  // ========================================================
+  // API ENDPOINT: /api/rag/playbooks (List Institutional Playbooks)
+  // ========================================================
+  if (pathname === '/api/rag/playbooks' && req.method === 'GET') {
+    const playbooks = ragEngine ? ragEngine.documents.map(d => ({
+      id: d.id,
+      title: d.title,
+      category: d.category,
+      tags: d.tags,
+      rules: d.rules,
+      text: d.text
+    })) : [];
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ count: playbooks.length, playbooks }));
+    return;
+  }
+
+  // ========================================================
+  // API ENDPOINT: /api/gemini/analyze (Gemini Intraday AI Proxy with RAG Augmentation)
   // ========================================================
   if (pathname === '/api/gemini/analyze' && req.method === 'POST') {
     try {
       const body = await parseJsonBody(req);
       const apiKey = body.apiKey || req.headers['x-api-key'];
       const model = body.model || 'gemini-1.5-flash';
-      const prompt = body.prompt;
+      let prompt = body.prompt;
 
       if (!apiKey) {
         res.writeHead(400, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ error: 'Missing Gemini API Key' }));
         return;
+      }
+
+      // RAG Augmentation: Semantic retrieval of matching institutional playbooks
+      let ragGrounding = [];
+      if (ragEngine) {
+        const queryTerm = `${body.symbol || ''} ${body.catalyst || ''} 15m ORB vwap breakout`;
+        ragGrounding = await ragEngine.search(queryTerm, 2, apiKey);
+        if (ragGrounding.length > 0) {
+          const ragContext = ragEngine.formatRAGContextForLLM(ragGrounding);
+          prompt = `${ragContext}\n\n${prompt}`;
+        }
       }
 
       const postPayload = JSON.stringify({
@@ -123,6 +206,17 @@ const server = http.createServer(async (req, res) => {
         parsed = JSON.parse(geminiRes.body);
       } catch (e) {
         parsed = { raw: geminiRes.body };
+      }
+
+      // Inject RAG grounding metadata into the response
+      if (typeof parsed === 'object' && parsed !== null) {
+        parsed.ragGrounding = ragGrounding.map(d => ({
+          id: d.id,
+          title: d.title,
+          category: d.category,
+          similarity: d.similarity,
+          tags: d.tags
+        }));
       }
 
       res.writeHead(geminiRes.statusCode || 200, { 'Content-Type': 'application/json' });

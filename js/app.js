@@ -211,6 +211,9 @@ class GroviqueApp {
       case 'user-settings':
         mainContainer.innerHTML = UIComponents.renderSettings();
         break;
+      case 'rag-mcp':
+        mainContainer.innerHTML = UIComponents.renderRagMcpStudio(stream);
+        break;
       case 'sandbox-positions':
         mainContainer.innerHTML = UIComponents.renderJournalAnalytics(stream);
         this.openPositionsModal();
@@ -1247,6 +1250,145 @@ class GroviqueApp {
     const clearBtn = document.getElementById('workspaceSearchClearBtn');
     if (clearBtn) clearBtn.classList.add('hidden');
     this.handleWorkspaceSearchFocus();
+  }
+
+  // ==========================================
+  // RAG & MCP STUDIO EVENT HANDLERS
+  // ==========================================
+  async executeRagQuery() {
+    const input = document.getElementById('ragQueryInput');
+    const select = document.getElementById('ragTopKSelect');
+    const resultsArea = document.getElementById('ragResultsArea');
+    if (!input || !resultsArea) return;
+
+    const query = input.value.trim();
+    const topK = parseInt(select ? select.value : 3);
+    if (!query) return;
+
+    resultsArea.innerHTML = `
+      <div class="p-4 rounded-lg bg-[#090B10] border border-slate-800 text-[#00F0FF] text-center flex items-center justify-center gap-2">
+        <span class="material-symbols-outlined text-[18px] animate-spin">sync</span>
+        <span>Computing Cosine Similarity &amp; Retrieving Vectors...</span>
+      </div>
+    `;
+
+    try {
+      const data = await window.ragMcpClient.queryRAG(query, topK);
+      if (!data.results || data.results.length === 0) {
+        resultsArea.innerHTML = `
+          <div class="p-4 rounded-lg bg-[#090B10] border border-slate-800 text-slate-400 text-center">
+            No matching institutional playbooks found for "${query}".
+          </div>
+        `;
+        return;
+      }
+
+      resultsArea.innerHTML = `
+        <div class="flex items-center justify-between text-xs text-slate-400 pb-1">
+          <span>Retrieved <strong class="text-[#00FF88]">${data.results.length}</strong> Grounded Institutional Playbooks for query: "<span class="text-slate-200">${query}</span>"</span>
+          <span class="text-[#00F0FF] font-bold">Vector Metric: Cosine Similarity</span>
+        </div>
+        <div class="flex flex-col gap-2.5">
+          ${data.results.map((res, i) => `
+            <div class="p-3.5 rounded-lg bg-[#090B10] border border-slate-800 flex flex-col gap-2">
+              <div class="flex items-center justify-between flex-wrap gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded bg-[#00FF88]/20 text-[#00FF88] text-[10px] font-bold">#${i + 1} MATCH</span>
+                  <h4 class="font-bold text-slate-100 text-xs">${res.title}</h4>
+                  <span class="px-1.5 py-0.2 rounded bg-slate-800 text-slate-300 text-[9px]">${res.category}</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="text-slate-400 text-[10px]">Relevance:</span>
+                  <span class="px-2 py-0.5 rounded font-bold text-xs ${res.similarity >= 0.3 ? 'bg-[#00FF88]/20 text-[#00FF88]' : 'bg-[#FFB800]/20 text-[#FFB800]'}">
+                    ${(res.similarity * 100).toFixed(1)}%
+                  </span>
+                </div>
+              </div>
+              <p class="text-slate-300 text-[11px] leading-relaxed bg-[#111622] p-2.5 rounded border border-slate-800/80">${res.text}</p>
+              ${res.rules && res.rules.length > 0 ? `
+                <div class="flex flex-col gap-1 pt-1">
+                  <span class="text-[10px] text-slate-400 font-bold uppercase">Strict Execution Rules:</span>
+                  <ul class="list-disc list-inside text-[11px] text-[#00F0FF] flex flex-col gap-0.5">
+                    ${res.rules.map(r => `<li><span class="text-slate-300">${r}</span></li>`).join('')}
+                  </ul>
+                </div>
+              ` : ''}
+              <div class="flex flex-wrap gap-1 pt-1 border-t border-slate-800/60">
+                ${(res.tags || []).map(t => `<span class="px-1.5 py-0.2 rounded bg-[#191c22] text-slate-400 text-[9px] border border-slate-800">${t}</span>`).join('')}
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    } catch (err) {
+      resultsArea.innerHTML = `
+        <div class="p-3 rounded-lg bg-[#93000a]/20 border border-[#ffb4ab]/40 text-[#ffb4ab] text-xs">
+          RAG Query failed: ${err.message}
+        </div>
+      `;
+    }
+  }
+
+  async executeMcpTool(name, args) {
+    const term = document.getElementById('mcpTerminalOutput');
+    const latencyDisp = document.getElementById('mcpLatencyDisplay');
+    if (!term) return;
+
+    term.innerText = `// Invoking MCP Tool: ${name}...\n// Sending JSON-RPC 2.0 payload to /api/mcp...`;
+    if (latencyDisp) latencyDisp.innerText = 'Executing...';
+
+    try {
+      const parsedArgs = typeof args === 'string' ? JSON.parse(args) : args;
+      const res = await window.ragMcpClient.callTool(name, parsedArgs);
+      
+      if (latencyDisp) {
+        latencyDisp.innerText = `Executed in ${res.latencyMs}ms at ${res.timestamp}`;
+      }
+
+      term.innerText = JSON.stringify({
+        jsonrpc: "2.0",
+        id: Date.now(),
+        method: "tools/call",
+        tool: name,
+        arguments: parsedArgs,
+        latencyMs: res.latencyMs,
+        result: res.result
+      }, null, 2);
+
+      if (window.arcadeAudio) window.arcadeAudio.playBlip();
+      if (window.showAppToast) {
+        window.showAppToast({
+          title: `MCP Tool: ${name}`,
+          message: `Executed successfully in ${res.latencyMs}ms.`,
+          type: "success"
+        });
+      }
+    } catch (err) {
+      if (latencyDisp) latencyDisp.innerText = 'Execution Failed';
+      term.innerText = JSON.stringify({
+        jsonrpc: "2.0",
+        id: Date.now(),
+        error: { code: -32603, message: err.message }
+      }, null, 2);
+    }
+  }
+
+  async readMcpResource(uri) {
+    const term = document.getElementById('mcpResourceOutput');
+    if (!term) return;
+
+    term.innerText = `// Reading MCP Resource: ${uri}...`;
+    try {
+      const res = await window.ragMcpClient.readResource(uri);
+      const text = res.contents && res.contents[0] ? res.contents[0].text : JSON.stringify(res, null, 2);
+      try {
+        term.innerText = JSON.stringify(JSON.parse(text), null, 2);
+      } catch (e) {
+        term.innerText = text;
+      }
+    } catch (err) {
+      term.innerText = `// Failed to read resource: ${err.message}`;
+    }
   }
 }
 
